@@ -52,7 +52,7 @@ const htmlTemplateTop = `
   <title>Verify Your Account!</title>
 </head>
 
-<body style="background-color: #17a2b8; padding: 20px;">
+<body style="background-color: #6c63ff; padding: 20px;">
   <h1 class="auth-title">
     Si Terbang
   </h1>
