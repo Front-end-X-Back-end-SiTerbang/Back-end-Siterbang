@@ -68,7 +68,7 @@ module.exports = {
         to: req.body.email.toLowerCase(),
         subject: "Activate Your Account!",
         html: activateAccount(
-          `http://localhost:3000/auth/activation?token=${token}`
+          `http://localhost:3000/auth/activation?emailToken=${token}`
         ),
       };
       await sendEmail.sendEmail(templateEmail);
@@ -84,8 +84,8 @@ module.exports = {
     }
   },
   activation: async (req, res, next) => {
-    const { token } = req.query;
-    const user = await User.findOne({ where: { emailToken: { token } } });
+    const { emailToken } = req.query;
+    const user = await User.findOne({ where: { emailToken } });
     console.log(emailToken);
     if (!user) {
       return res.send(`
@@ -150,4 +150,5 @@ module.exports = {
       },
     });
   },
+  getAll: async (req, res, next) => {},
 };
