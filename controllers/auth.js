@@ -68,7 +68,7 @@ module.exports = {
         to: req.body.email.toLowerCase(),
         subject: "Activate Your Account!",
         html: activateAccount(
-          `http://localhost:3000/auth/activation?emailToken=${token}`
+          `https://siterbang-develop.up.railway.app/auth/activation?emailToken=${token}`
         ),
       };
       await sendEmail.sendEmail(templateEmail);
@@ -84,71 +84,99 @@ module.exports = {
     }
   },
   activation: async (req, res, next) => {
-    const { emailToken } = req.query;
-    const user = await User.findOne({ where: { emailToken } });
-    console.log(emailToken);
-    if (!user) {
-      return res.send(`
+    try {
+      const { emailToken } = req.query;
+      const user = await User.findOne({ where: { emailToken } });
+      console.log(emailToken);
+      if (!user) {
+        return res.send(`
       <div>
       <h1>Activation Failed</h1>
       <h3>Token invalid</h3>
       </div>`);
-    }
+      }
 
-    await User.update(
-      { is_verified: VERIFIED.TRUE },
-      { where: { id: user.id } }
-    );
+      await User.update(
+        { is_verified: VERIFIED.TRUE },
+        { where: { id: user.id } }
+      );
 
-    return res.send(`
+      return res.send(`
     <div>
         <h1>Activation Success</h1>
         <h3>You can login now</h3>
       </div>
     `);
+    } catch (err) {
+      next(err);
+    }
   },
   login: async (req, res, next) => {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(404).json({
-        status: false,
-        message: "data is not found!",
-        data: null,
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "data is not found!",
+          data: null,
+        });
+      }
+
+      if (user.is_verified === VERIFIED.FALSE) {
+        return res.status(401).json({
+          status: false,
+          message: "your account is not verified!, please check your email",
+          data: null,
+        });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return res.status(401).json({
+          status: false,
+          message: "password doesnt match!",
+          data: null,
+        });
+      }
+
+      const payload = {
+        id: user.id,
+      };
+      const token = jwt.sign(payload, JWT_SECRET);
+
+      return res.status(200).json({
+        status: true,
+        message: "login successful!",
+        data: {
+          email: user.email,
+          token: token,
+        },
       });
+    } catch (err) {
+      next(err);
     }
-
-    if (user.is_verified === VERIFIED.FALSE) {
-      return res.status(401).json({
-        status: false,
-        message: "your account is not verified!, please check your email",
-        data: null,
-      });
-    }
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(401).json({
-        status: false,
-        message: "password doesnt match!",
-        data: null,
-      });
-    }
-
-    const payload = {
-      id: user.id,
-    };
-    const token = jwt.sign(payload, JWT_SECRET);
-
-    return res.status(200).json({
-      status: true,
-      message: "login successful!",
-      data: {
-        email: user.email,
-        token: token,
-      },
-    });
   },
-  getAll: async (req, res, next) => {},
+  getAll: async (req, res, next) => {
+    try {
+      const user = await User.findAll();
+
+      if (!user.length) {
+        return res.status(200).json({
+          status: false,
+          message: "empty data",
+          data: user,
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: "Get data success!",
+        data: user,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
