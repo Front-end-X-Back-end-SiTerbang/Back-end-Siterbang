@@ -37,7 +37,7 @@ const htmlTemplateTop = `
     }
 
     .auth-button {
-      background-color: #293b5f;
+      background-color: #6c63ff;
       text-decoration: none;
       text-align: center;
       border-radius: 5px;

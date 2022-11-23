@@ -8,7 +8,7 @@ const activateAccount = (link) => {
     Immediately activate your account by clicking the button below.
   </p>
   
-  <a href="${link}" style="color: white;" class="auth-button">Aktifkan Akun</a>
+  <a href="${link}" style="color: white;" class="auth-button">Activate Account</a>
   
   <p>
   If you don't feel like registering an account at SiTerbang, please ignore this email.

@@ -87,26 +87,21 @@ module.exports = {
     try {
       const { emailToken } = req.query;
       const user = await User.findOne({ where: { emailToken } });
-      console.log(emailToken);
-      if (!user) {
-        return res.send(`
-      <div>
-      <h1>Activation Failed</h1>
-      <h3>Token invalid</h3>
-      </div>`);
-      }
+      // console.log(emailToken);
+      // if (!user) {
+      //   return res.send(`
+      // <div>
+      // <h1>Activation Failed</h1>
+      // <h3>Token invalid</h3>
+      // </div>`);
+      // }
 
       await User.update(
         { is_verified: VERIFIED.TRUE },
         { where: { id: user.id } }
       );
 
-      return res.send(`
-    <div>
-        <h1>Activation Success</h1>
-        <h3>You can login now</h3>
-      </div>
-    `);
+      return res.redirect("/auth/login");
     } catch (err) {
       next(err);
     }
