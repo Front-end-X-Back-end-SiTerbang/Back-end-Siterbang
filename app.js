@@ -27,8 +27,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const { HTTP_PORT } = process.env;
+const { PORT } = process.env;
 
-app.listen(HTTP_PORT, () =>
-  console.log(`running on port ${HTTP_PORT} || http://localhost:${HTTP_PORT}`)
+app.listen(PORT, () =>
+  console.log(`running on port ${PORT} || http://localhost:${PORT}`)
 );
