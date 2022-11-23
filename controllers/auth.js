@@ -1,11 +1,13 @@
 require("dotenv").config();
 const { User } = require("../models");
-const { ROLE } = require("../utils/enum");
-const { TYPE } = require("../utils/enum");
-const { JWT_SECRET } = process.env;
+const { ROLE, TYPE, VERIFIED } = require("../utils/enum");
+const { JWT_SECRET, GOOGLE_SENDER_EMAIL } = process.env;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const crypto = require("node:crypto");
+const activateAccount = require("../utils/email/activateAccountEmail");
+const sendEmail = require("../utils/email/email");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -13,6 +15,7 @@ module.exports = {
       const {
         name,
         email,
+        emailToken,
         password,
         confirm_password,
         phone,
@@ -21,7 +24,7 @@ module.exports = {
         photo,
         role = ROLE.BUYER,
         user_type = TYPE.BASIC,
-        is_verified = false,
+        is_verified = VERIFIED.FALSE,
       } = req.body;
 
       // Check Password
@@ -45,9 +48,11 @@ module.exports = {
       }
 
       const encryptedPassword = await bcrypt.hash(password, 10);
+      const token = crypto.randomBytes(30).toString("hex");
       const newUser = await User.create({
         name,
         email,
+        emailToken: token,
         password: encryptedPassword,
         phone,
         address,
@@ -58,7 +63,16 @@ module.exports = {
         is_verified,
       });
 
-      // console.log(token);
+      // Send email for activate account
+      const templateEmail = {
+        to: req.body.email.toLowerCase(),
+        subject: "Activate Your Account!",
+        html: activateAccount(
+          `http://localhost:3000/auth/activation?token=${token}`
+        ),
+      };
+      await sendEmail.sendEmail(templateEmail);
+      await User.update({ emailToken: token }, { where: { email } });
 
       return res.status(201).json({
         status: true,
@@ -66,7 +80,74 @@ module.exports = {
         data: newUser,
       });
     } catch (err) {
-      next(err);
+      console.log(err);
     }
+  },
+  activation: async (req, res, next) => {
+    const { token } = req.query;
+    const user = await User.findOne({ where: { emailToken: { token } } });
+    console.log(emailToken);
+    if (!user) {
+      return res.send(`
+      <div>
+      <h1>Activation Failed</h1>
+      <h3>Token invalid</h3>
+      </div>`);
+    }
+
+    await User.update(
+      { is_verified: VERIFIED.TRUE },
+      { where: { id: user.id } }
+    );
+
+    return res.send(`
+    <div>
+        <h1>Activation Success</h1>
+        <h3>You can login now</h3>
+      </div>
+    `);
+  },
+  login: async (req, res, next) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "data is not found!",
+        data: null,
+      });
+    }
+
+    if (user.is_verified === VERIFIED.FALSE) {
+      return res.status(401).json({
+        status: false,
+        message: "your account is not verified!, please check your email",
+        data: null,
+      });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({
+        status: false,
+        message: "password doesnt match!",
+        data: null,
+      });
+    }
+
+    const payload = {
+      id: user.id,
+    };
+    const token = jwt.sign(payload, JWT_SECRET);
+
+    return res.status(200).json({
+      status: true,
+      message: "login successful!",
+      data: {
+        email: user.email,
+        token: token,
+      },
+    });
   },
 };

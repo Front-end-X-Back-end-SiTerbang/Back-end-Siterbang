@@ -8,4 +8,9 @@ const TYPE = {
   GOOGLE: "GOOGLE",
 };
 
-module.exports = { ROLE, TYPE };
+const VERIFIED = {
+  TRUE: true,
+  FALSE: false,
+};
+
+module.exports = { ROLE, TYPE, VERIFIED };
