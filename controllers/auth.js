@@ -93,7 +93,7 @@ module.exports = {
         { where: { id: user.id } }
       );
 
-      return res.redirect("/auth/login");
+      return res.redirect("http://localhost:3000/login");
     } catch (err) {
       next(err);
     }
