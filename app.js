@@ -1,14 +1,16 @@
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const xss = require("xss-clean");
 const app = express();
 const routes = require("./routes");
-// const cors = require("cors");
+const cors = require("cors");
 
 app.use(express.json());
 app.set("view engine", "ejs");
 app.use(morgan("dev"));
-// app.use(cors);
+app.use(xss);
+app.use(cors);
 
 app.use(routes);
 
