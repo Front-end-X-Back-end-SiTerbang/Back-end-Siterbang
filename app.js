@@ -9,8 +9,8 @@ const cors = require("cors");
 app.use(express.json());
 app.set("view engine", "ejs");
 app.use(morgan("dev"));
-app.use(xss);
-app.use(cors);
+app.use(xss());
+app.use(cors());
 
 app.use(routes);
 
