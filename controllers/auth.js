@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
 const activateAccount = require("../utils/email/activateAccountEmail");
+const resetPassword = require("../utils/email/resetAccountEmail");
 const sendEmail = require("../utils/email/email");
 
 module.exports = {
@@ -161,6 +162,67 @@ module.exports = {
         status: true,
         message: "Get data success!",
         data: user,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  forgotPassword: async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      
+      const user = await User.findOne({ where: { email } });
+      if (user) {
+        const payload = { user_id: user.id };
+        const token = jwt.sign(payload, JWT_SECRET);
+        const templateResetPassword = {
+        to: req.body.email.toLowerCase(),
+        subject: "Reset Your Password!",
+        html: resetPassword(
+          `https://siterbang-develop.up.railway.app/auth/reset-password?token=${token}`
+        ),
+      };
+      await sendEmail.sendEmail(templateResetPassword);
+      }
+
+      return res.redirect("http://localhost:3000/auth/reset-password");
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  resetPassword: async (req, res, next) => {
+    try {
+      const { token } = req.query;
+      const { new_password, confirm_new_password } = req.body;
+
+      console.log("TOKEN :", token);
+
+      if (!token)
+        return res.render("auth/reset-password", {
+          message: "invalid token",
+          token,
+        });
+      if (new_password != confirm_new_password)
+        return res.render("auth/reset-password", {
+          message: "password doesn't match!",
+          token,
+        });
+
+      const payload = jwt.verify(token, JWT_SECRET);
+      const encryptedPassword = await bcrypt.hash(new_password, 10);
+
+      const user = await User.update(
+        { password: encryptedPassword },
+        { where: { id: payload.user_id } }
+      );
+      // validasi masih salah
+      // if (user[0]) return res.render('auth/reset-password', { message: 'failed reset password', token });
+
+      return res.status(201).json({
+        status: true,
+        message: "Success!",
       });
     } catch (err) {
       next(err);
