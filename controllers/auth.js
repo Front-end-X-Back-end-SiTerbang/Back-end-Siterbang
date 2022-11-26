@@ -93,7 +93,7 @@ module.exports = {
         { where: { id: user.id } }
       );
 
-      return res.redirect("http://localhost:3000/login");
+      return res.redirect("http://siterbang.km3ggwp.com/login");
     } catch (err) {
       next(err);
     }

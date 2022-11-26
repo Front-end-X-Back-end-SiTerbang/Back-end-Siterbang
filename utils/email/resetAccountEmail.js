@@ -3,17 +3,17 @@ const { htmlTemplateTop, htmlTemplateBottom } = require("./template");
 const resetAccount = (link) => {
   const htmlContent = `
   <p>
-    Anda menerima email ini karena Anda telah melakukan permintaan Reset Password di Ankasa.
+  You received this email because you have made a Password Reset request at SiTerbang.
     <br>
-    Segera ubah sandi Anda dengan click tombol di bawah ini.
+    Change your password immediately by clicking the button below.
   </p>
   
   <a href="${link}" style="color: white;" class="auth-button">Reset Password</a>
   
   <p>
-    Jika Anda tidak merasa melakukan permintaan Reset Password di Ankasa, abaikan email ini.
+    If you don't think you have made a Password Reset request at SiTerbang, please ignore this email.
     <br>
-    Link alternatif: <a href="${link}">${link}</a>
+    Alternative link: <a href="${link}">${link}</a>
   </p>
   
 
