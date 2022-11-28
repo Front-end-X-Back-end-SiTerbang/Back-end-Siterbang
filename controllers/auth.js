@@ -171,22 +171,26 @@ module.exports = {
   forgotPassword: async (req, res, next) => {
     try {
       const { email } = req.body;
-      
+
       const user = await User.findOne({ where: { email } });
       if (user) {
         const payload = { user_id: user.id };
         const token = jwt.sign(payload, JWT_SECRET);
         const templateResetPassword = {
-        to: req.body.email.toLowerCase(),
-        subject: "Reset Your Password!",
-        html: resetPassword(
-          `https://siterbang-develop.up.railway.app/auth/reset-password?token=${token}`
-        ),
-      };
-      await sendEmail.sendEmail(templateResetPassword);
+          to: req.body.email.toLowerCase(),
+          subject: "Reset Your Password!",
+          html: resetPassword(
+            `http://siterbang-develop.up.railway.app/auth/reset-password?token=${token}`
+          ),
+        };
+        await sendEmail.sendEmail(templateResetPassword);
       }
 
-      return res.redirect("http://localhost:3000/auth/reset-password");
+      return res.status(200).json({
+        status: true,
+        message: "request forgot-password successful!",
+        data: req.body.email,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -217,12 +221,10 @@ module.exports = {
         { password: encryptedPassword },
         { where: { id: payload.user_id } }
       );
-      // validasi masih salah
-      // if (user[0]) return res.render('auth/reset-password', { message: 'failed reset password', token });
 
       return res.status(201).json({
         status: true,
-        message: "Success!",
+        message: "Update password success!",
       });
     } catch (err) {
       next(err);

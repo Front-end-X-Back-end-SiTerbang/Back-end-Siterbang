@@ -1,7 +1,7 @@
-const { htmlTemplateTop, htmlTemplateBottom } = require("./template");
+const { header, footer } = require("./template");
 
 const resetAccount = (link) => {
-  const htmlContent = `
+  const content = `
   <p>
   You received this email because you have made a Password Reset request at SiTerbang.
     <br>
@@ -21,7 +21,7 @@ const resetAccount = (link) => {
   
   <p>Copyright &copy; ${new Date().getFullYear()} Si Terbang`;
 
-  return htmlTemplateTop + htmlContent + htmlTemplateBottom;
+  return header + content + footer;
 };
 
 module.exports = resetAccount;

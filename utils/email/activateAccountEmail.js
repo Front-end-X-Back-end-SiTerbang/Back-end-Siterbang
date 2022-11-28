@@ -1,7 +1,7 @@
-const { htmlTemplateTop, htmlTemplateBottom } = require("./template");
+const { header, footer } = require("./template");
 
 const activateAccount = (link) => {
-  const htmlContent = `
+  const content = `
   <p>
     You received this email because your account has been registered at SiTerbang
     <br>
@@ -21,7 +21,7 @@ const activateAccount = (link) => {
   
   <p>Copyright &copy; ${new Date().getFullYear()} SiTerbang`;
 
-  return htmlTemplateTop + htmlContent + htmlTemplateBottom;
+  return header + content + footer;
 };
 
 module.exports = activateAccount;

@@ -9,5 +9,4 @@ router.get("/get", controllers.auth.getAll);
 router.post("/forgot-password", controllers.auth.forgotPassword);
 router.post("/reset-password", controllers.auth.resetPassword);
 
-
 module.exports = router;

@@ -1,4 +1,4 @@
-const htmlTemplateTop = `
+const header = `
 <!DOCTYPE html>
 <html lang="id">
 
@@ -62,9 +62,9 @@ const htmlTemplateTop = `
 
     <hr>`;
 
-const htmlTemplateBottom = `
+const footer = `
   </div>
 </body>
 </html>`;
 
-module.exports = { htmlTemplateTop, htmlTemplateBottom };
+module.exports = { header, footer };

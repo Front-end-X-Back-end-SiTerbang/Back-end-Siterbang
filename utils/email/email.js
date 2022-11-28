@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const ejs = require("ejs");
 
 const {
   GOOGLE_REFRESH_TOKEN,
