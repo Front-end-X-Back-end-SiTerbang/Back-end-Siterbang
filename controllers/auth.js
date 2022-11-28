@@ -151,7 +151,7 @@ module.exports = {
       const user = await User.findAll();
 
       if (!user.length) {
-        return res.status(200).json({
+        return res.status(  ).json({
           status: false,
           message: "empty data",
           data: user,
