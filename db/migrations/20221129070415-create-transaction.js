@@ -11,12 +11,6 @@ module.exports = {
       product_id: {
         type: Sequelize.INTEGER
       },
-      airline_id: {
-        type: Sequelize.INTEGER
-      },
-      aircraft_id: {
-        type: Sequelize.INTEGER
-      },
       is_paid: {
         type: Sequelize.BOOLEAN
       },

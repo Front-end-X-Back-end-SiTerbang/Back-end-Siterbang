@@ -17,7 +17,7 @@ module.exports = {
       image: {
         type: Sequelize.STRING
       },
-      total_aircraft: {
+      total_airplane: {
         type: Sequelize.INTEGER
       },
       createdAt: {

@@ -1,5 +1,5 @@
-const mid = require("./restrict");
+const restrict = require("./restrict");
 
 module.exports = {
-  mid,
+  restrict,
 };

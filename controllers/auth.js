@@ -131,6 +131,7 @@ module.exports = {
 
       const payload = {
         id: user.id,
+        role: user.role,
       };
       const token = jwt.sign(payload, JWT_SECRET);
 
@@ -151,7 +152,7 @@ module.exports = {
       const user = await User.findAll();
 
       if (!user.length) {
-        return res.status(  ).json({
+        return res.status().json({
           status: false,
           message: "empty data",
           data: user,
