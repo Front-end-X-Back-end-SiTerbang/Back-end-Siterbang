@@ -52,7 +52,10 @@ module.exports = {
   get: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const airlines = await Airline.findOne({ where: { id } });
+      const airlines = await Airline.findOne({
+        where: { id },
+        include: ["airplanes"],
+      });
 
       if (!airlines) {
         return res.status(200).json({

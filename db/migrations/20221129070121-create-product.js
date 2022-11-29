@@ -29,11 +29,11 @@ module.exports = {
       airline_id: {
         type: Sequelize.INTEGER
       },
-      aircraft_id: {
+      airplane_id: {
         type: Sequelize.INTEGER
       },
       estimation: {
-        type: Sequelize.TIME
+        type: Sequelize.FLOAT
       },
       created_date: {
         type: Sequelize.DATE
