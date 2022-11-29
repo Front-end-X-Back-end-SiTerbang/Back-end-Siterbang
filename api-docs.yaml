@@ -1,0 +1,132 @@
+openapi: 3.0.0
+info:
+    title: SiTerbang API
+    description: SiTerbang API Documentation
+    version: 1.0.0
+
+servers:
+    - url: http://localhost:3000
+    description: localhost
+    - url: https://siterbang-api-test.km3ggwp.com
+    description: railway
+paths:
+
+    '/auth/register':
+    post:
+        summary: Create new user
+        tags: []
+        responses:
+            '201':
+                description: User created
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            New User John Doe:
+                                value:
+                                    id: 10
+                                    name: John Doe
+                                    email: johndoe@gmail.com
+                                    password: johndoe123
+                                    confirm_password: johndoe123
+            '400':
+                description: Missing required information
+            '409':
+                description: Email already exist
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+                                confirm_password:
+                                    type: string
+                            required:
+                                - name
+                                - email
+                                - password
+                                - confirm_password
+            description: Post the necessary fields for the API to create a new user.
+            description: Create a new user.
+    
+    '/auth/login':
+    post:
+        summary: Login user account
+        tags: []
+        responses:
+        '200':
+            description: Login succesful
+            content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            Login User John Doe:
+                                value:
+                                    email: johndoe@gmail.com
+                                    password: johndoe123
+        '401':
+            description: You're not authorized, please verify your account
+        '404':
+            description: Data not found
+        requestBody:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            email:
+                                type: string
+                                format: email
+                            password:
+                                type: string
+                        required:
+                            - email
+                            - password
+
+    '/auth/get':
+    get:
+        summary: Get all of user account
+        tags: []
+        responses:
+            '200':
+                description: User found
+            '400':
+                description: User not found
+components:
+    schemas:
+        User:
+            title: User
+            type: object
+            description: ''
+            examples:
+                - id: 142
+                  name: John Doe
+                  email: johndoe@gmail.com
+                  password: johndoe123
+            properties:
+                id:
+                    type: integer
+                    description: Unique identifier for the given user || auto increment id
+                name:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                password:
+                    type: string                  
+                is_verified:
+                    type: boolean
+                    description: Set to true if the user's email has been verified
+            required:
+                - id
+                - name
+                - email
+                - is_verified
