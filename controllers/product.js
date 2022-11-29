@@ -112,7 +112,7 @@ module.exports = {
         { where: { id } }
       );
 
-      const updatedProduct = await Product.fineOne({ where: { id } });
+      const updatedProduct = await Product.findOne({ where: { id } });
       return res.status(201).json({
         status: true,
         message: "Products updated successfully",
