@@ -1,4 +1,5 @@
-const { Product } = require("../models");
+const { Product, Destination } = require("../models");
+
 const airplane = require("./airplane");
 
 module.exports = {
@@ -21,11 +22,48 @@ module.exports = {
       next(err);
     }
   },
-  find: async (req, res, next) => {},
+  find: async (req, res, next) => {
+    const { origin, destination, flight_date, type } = req.query;
+
+    const getOr_id = await Destination.findOne({
+      where: { city: origin },
+    });
+    const getDes_id = await Destination.findOne({
+      where: { city: destination },
+    });
+
+    if (!getOr_id) {
+      return res.status(200).json({
+        status: false,
+        message: "Product with your origin not found",
+        data: getOr_id,
+      });
+    }
+    if (!getDes_id) {
+      return res.status(200).json({
+        status: false,
+        message: "Product with your destination not found",
+        data: getDes_id,
+      });
+    }
+    const origin_id = getOr_id.id;
+    const destination_id = getDes_id.id;
+    const findProduct = await Product.findAll({
+      where: { origin_id, destination_id, flight_date, type },
+    });
+
+    if (!findProduct.length) {
+      return res.status(200).json({
+        status: false,
+        message: "Product with your origin or destination not found",
+        data: findProduct,
+      });
+    }
+  },
   create: async (req, res, next) => {
     try {
       const {
-        origin,
+        origin_id,
         destination_id,
         price,
         stock,
@@ -40,7 +78,7 @@ module.exports = {
       } = req.body;
 
       const newProduct = await Product.create({
-        origin,
+        origin_id,
         destination_id,
         price,
         stock,
@@ -68,7 +106,7 @@ module.exports = {
   update: async (req, res, next) => {
     try {
       const {
-        origin,
+        origin_id,
         destination_id,
         price,
         stock,
@@ -94,7 +132,7 @@ module.exports = {
 
       const updateProduct = await Product.update(
         {
-          origin,
+          origin_id,
           destination_id,
           price,
           stock,
