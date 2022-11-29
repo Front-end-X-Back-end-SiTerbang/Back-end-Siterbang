@@ -79,10 +79,10 @@ module.exports = {
         where: { airline_id: airlines_id },
       });
 
-      if (!airplane) {
+      if (!airplane.length) {
         return res.status(200).json({
           status: false,
-          message: "Airplanes not found",
+          message: "This Airlines doesn't have airplane yet",
           data: airplane,
         });
       }
