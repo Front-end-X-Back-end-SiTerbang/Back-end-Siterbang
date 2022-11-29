@@ -138,7 +138,7 @@ module.exports = {
           stock,
           transit_total,
           flight_date,
-          airline_id: airplane.airline_id,
+          airline_id: airline.id,
           airplane_id,
           create_date: Date.now(),
           estimation,
