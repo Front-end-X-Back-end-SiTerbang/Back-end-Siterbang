@@ -7,7 +7,7 @@ module.exports = {
       [
         {
           name: "Admin SiTerbang",
-          email: "ofc.siterbang@gmail.com",
+          email: "clayriel@admin.com",
           password: "admin",
           phone: "085155106038",
           address: "Purwokerto",
