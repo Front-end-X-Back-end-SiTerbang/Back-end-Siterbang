@@ -9,10 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       origin_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       destination_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
       price: {
         type: Sequelize.INTEGER,

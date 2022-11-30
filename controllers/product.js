@@ -1,4 +1,4 @@
-const { Product, Destination } = require("../models");
+const { Product, Airport } = require("../models");
 
 const airplane = require("./airplane");
 
@@ -25,10 +25,10 @@ module.exports = {
   find: async (req, res, next) => {
     const { origin, destination, flight_date, type } = req.query;
 
-    const getOr_id = await Destination.findOne({
+    const getOr_id = await Airport.findOne({
       where: { city: origin },
     });
-    const getDes_id = await Destination.findOne({
+    const getDes_id = await Airport.findOne({
       where: { city: destination },
     });
 

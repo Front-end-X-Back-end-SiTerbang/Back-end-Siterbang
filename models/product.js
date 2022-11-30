@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         as: "transactions",
       });
-      Product.belongsTo(models.Destination, {
+      Product.belongsTo(models.Airport, {
         foreignKey: "destination_id",
-        as: "destination",
+        as: "airport",
       });
       Product.belongsTo(models.Airplane, {
         foreignKey: "airplane_id",

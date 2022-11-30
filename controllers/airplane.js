@@ -39,7 +39,6 @@ module.exports = {
         name,
         airline_id,
         type,
-        destination_id,
       });
 
       return res.status(201).json({
@@ -111,7 +110,7 @@ module.exports = {
       }
 
       const updateAirplane = await Airplane.update(
-        { name, airline_id, type, destination_id },
+        { name, airline_id, type },
         { where: { id } }
       );
 
@@ -123,7 +122,6 @@ module.exports = {
           name: updated.name,
           airline_id: updated.airline_id,
           type: updated.type,
-          destination_id: updated.destination_id,
         },
       });
     } catch (error) {
