@@ -26,6 +26,9 @@ module.exports = {
       flight_date: {
         type: Sequelize.DATE,
       },
+      depature_hours: {
+        type: Sequelize.TIME,
+      },
       airline_id: {
         type: Sequelize.INTEGER,
       },

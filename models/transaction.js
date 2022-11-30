@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       is_cancelled: DataTypes.BOOLEAN,
       user_id: DataTypes.INTEGER,
       total_order: DataTypes.INTEGER,
+      total_passenger: DataTypes.INTEGER,
     },
     {
       sequelize,

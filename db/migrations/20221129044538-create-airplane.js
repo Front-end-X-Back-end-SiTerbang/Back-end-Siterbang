@@ -1,4 +1,7 @@
 "use strict";
+
+const { sequelize } = require("../../models");
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Airplanes", {
@@ -16,6 +19,9 @@ module.exports = {
       },
       type: {
         type: Sequelize.STRING,
+      },
+      capacity: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

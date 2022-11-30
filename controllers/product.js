@@ -1,7 +1,5 @@
 const { Product, Airport } = require("../models");
 
-const airplane = require("./airplane");
-
 module.exports = {
   getAll: async (req, res, next) => {
     try {
@@ -69,6 +67,8 @@ module.exports = {
         stock,
         transit_total,
         flight_date,
+        depature_hours,
+        airline_id,
         airplane_id,
         estimation,
         code,
@@ -84,8 +84,9 @@ module.exports = {
         stock,
         transit_total,
         flight_date,
-        airline_id: airplane.airline_id,
+        depature_hours,
         airplane_id,
+        airline_id,
         estimation,
         create_date: Date.now(),
         code,
@@ -138,7 +139,7 @@ module.exports = {
           stock,
           transit_total,
           flight_date,
-          airline_id: airline.id,
+          airline_id,
           airplane_id,
           create_date: Date.now(),
           estimation,

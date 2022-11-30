@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       airline_id: DataTypes.INTEGER,
       type: DataTypes.STRING,
-      destination_id: DataTypes.INTEGER,
+      capacity: DataTypes.INTEGER,
     },
     {
       sequelize,
