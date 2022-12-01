@@ -220,13 +220,13 @@ module.exports = {
           message: "invalid token",
         });
 
-      const match = bcrypt.compare(old_password, User.password);
-      if (!match) {
-        return res.status(400).json({
-          status: false,
-          message: "password doesn't match",
-        });
-      }
+      // const match = bcrypt.compare(old_password, User.password);
+      // if (!match) {
+      //   return res.status(400).json({
+      //     status: false,
+      //     message: "password doesn't match",
+      //   });
+      // }
 
       if (new_password != confirm_new_password)
         return res.status(400)({
