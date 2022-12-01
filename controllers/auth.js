@@ -28,6 +28,13 @@ module.exports = {
         is_verified = VERIFIED.FALSE,
       } = req.body;
 
+      if (password.length < 8) {
+        return res.status(400).json({
+          status: false,
+          message: "At least password has 8 character",
+        });
+      }
+
       // Check Password
       if (password != confirm_password) {
         return res.status(400).json({
@@ -196,14 +203,14 @@ module.exports = {
         data: req.body.email,
       });
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
 
   resetPassword: async (req, res, next) => {
     try {
       const { token } = req.query;
-      const { new_password, confirm_new_password } = req.body;
+      const { old_password, new_password, confirm_new_password } = req.body;
 
       console.log("TOKEN :", token);
 
@@ -211,13 +218,20 @@ module.exports = {
         return res.status(401).json({
           status: false,
           message: "invalid token",
-          data: null,
         });
+
+      const match = bcrypt.compare(old_password, User.password);
+      if (!match) {
+        return res.status(400).json({
+          status: false,
+          message: "password doesn't match",
+        });
+      }
+
       if (new_password != confirm_new_password)
         return res.status(400)({
           status: false,
           message: "password doesn't match!",
-          data: null,
         });
 
       const payload = jwt.verify(token, JWT_SECRET);
@@ -233,7 +247,7 @@ module.exports = {
         message: "Update password success!",
       });
     } catch (err) {
-      next(err);
+      console.log(err);
     }
   },
 };
