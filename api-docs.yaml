@@ -284,7 +284,7 @@ paths:
                     status: false
                     message: Password Doesn't Match
         '401':
-          description:
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -300,6 +300,29 @@ paths:
                   value:
                     status: false
                     message: invalid token
+        '500':
+          description: Internal Service Error
+  /airlines/all:
+    get:
+      summary: Get All Airlines
+      description: Get All Airlines
+      tags:
+        - Airlines
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    
+
 
                       
 components:
