@@ -44,7 +44,6 @@ module.exports = {
       }
 
       const decoded = jwt.verify(token, JWT_SECRET);
-      console.log(decoded);
 
       if (decoded.role !== ROLE.ADMIN) {
         return res.status(403).json({
