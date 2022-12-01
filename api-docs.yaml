@@ -1,0 +1,310 @@
+openapi: 3.0.0
+info:
+  title: SiTerbang API
+  description: SiTerbang API Documentation
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:3000
+    description: Localhost
+  - url: https://siterbang-api-test.km3ggwp.com
+    desription: Deployment on railway
+
+tags:
+  - Auth
+  - Airplane
+  - Airlines
+  - Product
+
+paths:
+  /auth/register:
+    post:
+      summary: Register New Account
+      description: Register New Account For Buyer
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                confirm_password:
+                  type: string
+            examples:
+              name: John Doe
+              email: johndoe@mail.com
+              password: admin123
+              confirm_password: admin123
+      responses:
+        "201":
+          description: Regist User Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      password:
+                        type: string
+              examples:
+                regist-user:
+                  value:
+                    status: true
+                    message: Register success
+                    data:
+                      name: John Doe
+                      email: johndoe@mail.com
+                      password: admin123
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                doesn't-match-password:
+                  value:
+                    status: false
+                    message: Password doesn't match
+                    data: null
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                email-exist:
+                  value:
+                    status: false
+                    message: Email already exist
+                    data: null
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+  /auth/login:
+    post:
+      summary: Login Account
+      description: Login Account
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+            exampless:
+              login-examples:
+                value:
+                  email: johndoe@gmail.com
+                  password: admin123
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      token:
+                        type: string
+              examples:
+                status-example:
+                  value:
+                    status: true
+                    message: login success
+                    data:
+                      email: johndoe@gmail.com
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkZWRlbnNldHlhd2FuMTdAZ21haWwuY29tIiwicm9sZSI6IkJVWUVSIiwiaWF0IjoxNjY5NDYwNTg0LCJleHAiOjE2Njk0NjQxODR9.UpEBOEZ4sVQfWhtzsdcJRUoJyROBVl8z6W528rMtYaY
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+  /auth/forgot-password:
+    post:
+      summary: Forgot Password Account
+      description: Request Forgot Password Account Via Email
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+            examples:
+              email: johndoe@mail.com
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+              examples:
+                forgot-password:
+                  value:
+                    status: true
+                    message: request forgot-password successful
+                    data:
+                      email: johndoe@gmail.com
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /auth/reset-password:
+    post:
+      summary: Reset Password
+      description: Reset Password Account
+      tags: 
+        - Auth
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                confirm_password:
+                  type: string
+            examples:
+              reset-password:
+                password: admin123
+                confirm_password: admin123
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                succesful:
+                  value:
+                    status: true
+                    message: Update Password Success
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                password-doesn't-match:
+                  value:
+                    status: false
+                    message: Password Doesn't Match
+        '401':
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                unauthorized:
+                  value:
+                    status: false
+                    message: invalid token
+
+                      
+components:
+  schemas: {}
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security schema
+      type: http
+      scheme: bearer

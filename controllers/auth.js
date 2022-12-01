@@ -30,12 +30,11 @@ module.exports = {
 
       // Check Password
       if (password != confirm_password) {
-        return (
-          res.render("auth/register"),
-          {
-            error: "password doesnt match!",
-          }
-        );
+        return res.status(400).json({
+          status: false,
+          message: "password doesnt match!",
+          data: null,
+        });
       }
 
       // Check User
@@ -78,10 +77,14 @@ module.exports = {
       return res.status(201).json({
         status: true,
         message: "Register success!",
-        data: newUser,
+        data: {
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.password,
+        },
       });
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
   activation: async (req, res, next) => {
@@ -107,7 +110,7 @@ module.exports = {
       if (!user) {
         return res.status(404).json({
           status: false,
-          message: "data is not found!",
+          message: "email is not found!",
           data: null,
         });
       }
@@ -205,14 +208,16 @@ module.exports = {
       console.log("TOKEN :", token);
 
       if (!token)
-        return res.render("auth/reset-password", {
+        return res.status(401).json({
+          status: false,
           message: "invalid token",
-          token,
+          data: null,
         });
       if (new_password != confirm_new_password)
-        return res.render("auth/reset-password", {
+        return res.status(400)({
+          status: false,
           message: "password doesn't match!",
-          token,
+          data: null,
         });
 
       const payload = jwt.verify(token, JWT_SECRET);
@@ -223,7 +228,7 @@ module.exports = {
         { where: { id: payload.user_id } }
       );
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: true,
         message: "Update password success!",
       });

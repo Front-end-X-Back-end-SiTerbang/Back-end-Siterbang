@@ -5,10 +5,11 @@ const xss = require("xss-clean");
 const app = express();
 const routes = require("./routes");
 const cors = require("cors");
+const YAML = require("yamljs");
 
 // SWAGGER
 const swaggerUi = require("swagger-ui-express");
-const apiDocumentation = require("./api-docs.json");
+const apiDocumentation = YAML.load("./api-docs.yaml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiDocumentation));
 
 app.use(express.json());

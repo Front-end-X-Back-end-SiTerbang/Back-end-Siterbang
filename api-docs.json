@@ -19,6 +19,14 @@
         {
             "name": "Auth",
             "description": ""
+        },
+        {
+            "name": "Airplane",
+            "description": ""
+        },
+        {
+            "name": "Airlines",
+            "description": ""
         }
     ],
     "paths": {
@@ -125,6 +133,58 @@
                 "responses": {
                     "200": {
                         "description": "Send email success, please check your email to reset password"
+                    }
+                }
+            }
+        },
+        "/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset password",
+                "consumes": "application/json",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "confirm_password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reset password success"
+                    },
+                    "401": {
+                        "description": "Password doesn't match"
+                    },
+                    "400": {
+                        "description": "Invalid token"
+                    }
+                }
+            }
+        },
+        "/airlines/all": {
+            "get": {
+                "tags": [
+                    "Airlines"
+                ],
+                "security": {
+                    "bearerAuth": []
+                },
+                "responses": {
+                    "200": {
+                        "description": "Get airlines success"
                     }
                 }
             }
