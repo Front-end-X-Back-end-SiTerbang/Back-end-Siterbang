@@ -11,5 +11,6 @@ router.get(
   mid.restrict.mustAdmin,
   c.transaction.getProductTransaction
 );
+router.put("/:id", mid.restrict.mustLogin, c.transaction.payment);
 
 module.exports = router;

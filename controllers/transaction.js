@@ -1,4 +1,4 @@
-const { Transaction, Product } = require("../models");
+const { Transaction, Product, Payment } = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 
@@ -129,31 +129,63 @@ module.exports = {
       data: { product: product, transactions: transactions },
     });
   },
-  
-  //   get: async (req, res, next) => {
-  //     try {
-  //       const { id } = req.params;
-  //       const airlines = await Airline.findOne({
-  //         where: { id },
-  //         include: ["airplanes"],
-  //       });
+  payment: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const transaction = await Transaction.findOne({ where: { id } });
+      const payment = await Payment.findAll({
+        where: { user_id: transaction.user_id },
+      });
+      // if (transaction.is_paid == true) {
+      //   return res.status(200).json({
+      //     status: false,
+      //     message: "This transaction already paid",
+      //     data: transaction,
+      //   });
+      // }
 
-  //       if (!airlines) {
-  //         return res.status(200).json({
-  //           status: false,
-  //           message: "Airlines not found",
-  //           data: airlines,
-  //         });
-  //       }
-  //       return res.status(200).json({
-  //         status: true,
-  //         message: "success get airlines",
-  //         data: airlines,
-  //       });
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   },
+      if (!payment.length) {
+        return res.status(200).json({
+          status: false,
+          message: "You haven't set any payment method",
+          data: payment,
+        });
+      } else if (payment.balance < transaction.balance) {
+        return res.status(200).json({
+          status: false,
+          message: "Insufficient balance!",
+          data: payment.balance,
+        });
+      }
+
+      const product = await Product.findOne({
+        where: { id: transaction.product_id },
+      });
+      const newStock = product.stock - transaction.total_passenger;
+
+      const updateStock = await Product.update(
+        { stock: newStock },
+        { where: { id: transaction.product_id } }
+      );
+      const updateTransaction = await Transaction.update(
+        { is_paid: true },
+        { where: { id } }
+      );
+      const updatedTransaction = await Transaction.findOne({
+        where: { id },
+        include: ["booking_details"],
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "Payment success",
+        data: { stock: newStock, transaction: updatedTransaction },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  //
 
   //   update: async (req, res, next) => {
   //     try {
