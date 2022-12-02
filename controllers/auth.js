@@ -191,7 +191,7 @@ module.exports = {
           to: req.body.email.toLowerCase(),
           subject: "Reset Your Password!",
           html: resetPassword(
-            `http://siterbang-develop.up.railway.app/auth/reset-password?token=${token}`
+            `http://siterbang-staging.km3ggwp.com/auth/reset-password/${token}`
           ),
         };
         await sendEmail.sendEmail(templateResetPassword);
@@ -209,10 +209,8 @@ module.exports = {
 
   resetPassword: async (req, res, next) => {
     try {
-      const { token } = req.query;
-      const { old_password, new_password, confirm_new_password } = req.body;
-
-      console.log("TOKEN :", token);
+      const { token } = req.params;
+      const { password, confirm_new_password } = req.body;
 
       if (!token)
         return res.status(401).json({
@@ -220,22 +218,21 @@ module.exports = {
           message: "invalid token",
         });
 
-      // const match = bcrypt.compare(old_password, User.password);
-      // if (!match) {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "password doesn't match",
-      //   });
-      // }
+      if (password.length < 8) {
+        return res.status(400).json({
+          status: false,
+          message: "At least password has 8 character!",
+        });
+      }
 
-      if (new_password != confirm_new_password)
-        return res.status(400)({
+      if (password != confirm_new_password)
+        return res.status(400).json({
           status: false,
           message: "password doesn't match!",
         });
 
       const payload = jwt.verify(token, JWT_SECRET);
-      const encryptedPassword = await bcrypt.hash(new_password, 10);
+      const encryptedPassword = await bcrypt.hash(password, 10);
 
       const user = await User.update(
         { password: encryptedPassword },

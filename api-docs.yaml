@@ -321,7 +321,26 @@ paths:
                   message:
                     type: string
                   data:
-                    
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+  /airlines:
+    post:
+      summary: Create Airlines
+      description: Create An Airlines
+      tags:
+        - Airlines
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          required: true
+      
+                        
 
 
                       
