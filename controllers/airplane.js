@@ -23,7 +23,7 @@ module.exports = {
   },
   createAirplane: async (req, res, next) => {
     try {
-      const { name, airline_id, type, destination_id } = req.body;
+      const { name, airline_id, type, capacity } = req.body;
 
       //check airplane
       const aircraftExist = await Airplane.findOne({ where: { name } });
@@ -39,6 +39,7 @@ module.exports = {
         name,
         airline_id,
         type,
+        capacity,
       });
 
       return res.status(201).json({
