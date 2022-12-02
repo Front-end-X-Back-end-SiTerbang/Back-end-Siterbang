@@ -1,6 +1,5 @@
 const { Transaction, Product } = require("../models");
 const jwt = require("jsonwebtoken");
-const { JWT } = require("google-auth-library");
 const { JWT_SECRET } = process.env;
 
 module.exports = {
@@ -66,6 +65,7 @@ module.exports = {
       const user = jwt.verify(token, JWT_SECRET);
       const userTransactions = await Transaction.findAll({
         where: { user_id: user.id, is_cancelled: false },
+        include: ["product", "booking_details"],
       });
       if (!userTransactions.length) {
         return res.status(200).json({
@@ -83,6 +83,53 @@ module.exports = {
       next(error);
     }
   },
+  get: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const transaction = await Transaction.findOne({
+        where: { id },
+        include: ["product", "booking_details"],
+      });
+      if (!transaction) {
+        return res.status(200).json({
+          status: false,
+          message: "Transactions not found",
+          data: transaction,
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: "success get transaction",
+        data: transaction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  getProductTransaction: async (req, res, next) => {
+    const { id } = req.params;
+
+    const transactions = await Transaction.findAll({
+      where: { product_id: id },
+      include: ["booking_details"],
+    });
+    if (!transactions.length) {
+      return res.status(200).json({
+        status: false,
+        message: "Products not found",
+        data: transactions,
+      });
+    }
+    const product = await Product.findOne({ where: { id } });
+    return res.status(200).json({
+      status: true,
+      message: "success get all product's transactions",
+      data: { product: product, transactions: transactions },
+    });
+  },
+  
   //   get: async (req, res, next) => {
   //     try {
   //       const { id } = req.params;
