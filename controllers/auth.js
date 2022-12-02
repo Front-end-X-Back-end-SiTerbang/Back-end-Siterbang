@@ -191,7 +191,7 @@ module.exports = {
           to: req.body.email.toLowerCase(),
           subject: "Reset Your Password!",
           html: resetPassword(
-            `http://siterbang-staging.km3ggwp.com/auth/reset-password/${token}`
+            `http://localhost:3000/auth/reset-password/${token}`
           ),
         };
         await sendEmail.sendEmail(templateResetPassword);
