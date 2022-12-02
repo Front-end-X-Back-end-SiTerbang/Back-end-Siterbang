@@ -136,13 +136,6 @@ module.exports = {
       const payment = await Payment.findAll({
         where: { user_id: transaction.user_id },
       });
-      // if (transaction.is_paid == true) {
-      //   return res.status(200).json({
-      //     status: false,
-      //     message: "This transaction already paid",
-      //     data: transaction,
-      //   });
-      // }
 
       if (!payment.length) {
         return res.status(200).json({
@@ -185,61 +178,34 @@ module.exports = {
       next(error);
     }
   },
-  //
+  cancelTransaction: async (req, res, next) => {
+    try {
+      const { id } = req.params;
 
-  //   update: async (req, res, next) => {
-  //     try {
-  //       const { name, phone } = req.body;
-  //       const { id } = req.params;
+      const transaction = await Transaction.findOne({ where: { id } });
+      if (!transaction) {
+        return res.status(200).json({
+          status: false,
+          message: "Transactions not found",
+          data: transaction,
+        });
+      }
 
-  //       const airlineExist = await Airline.findOne({ where: { id } });
-  //       if (!airlineExist) {
-  //         return res.status(200).json({
-  //           status: false,
-  //           message: "Airlines not found",
-  //           data: airlineExist,
-  //         });
-  //       }
-
-  //       const updateAirline = await Airline.update(
-  //         { name, phone },
-  //         { where: { id } }
-  //       );
-
-  //       const updated = await Airline.findOne({ where: { id } });
-  //       return res.status(201).json({
-  //         status: true,
-  //         message: "Airlines Updated Successfully",
-  //         data: {
-  //           name: updated.name,
-  //           phone: updated.phone,
-  //         },
-  //       });
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   },
-  //   delete: async (req, res, next) => {
-  //     try {
-  //       const { id } = req.params;
-  //       const airlineExist = await Airline.findOne({ where: { id } });
-  //       if (!airlineExist) {
-  //         return res.status(200).json({
-  //           status: false,
-  //           message: "Airlines not found",
-  //           data: airlineExist,
-  //         });
-  //       }
-
-  //       const deleteAirline = await Airline.destroy({ where: { id } });
-
-  //       return res.status(200).json({
-  //         status: true,
-  //         message: "Airlines Deleted Successfully",
-  //         data: deleteAirline,
-  //       });
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   },
+      const cancelTransaction = await Transaction.update(
+        { is_cancelled: true },
+        { where: { id } }
+      );
+      const cancelled = await Transaction.findOne({
+        where: { id },
+        include: ["booking_details"],
+      });
+      return res.status(200).json({
+        status: true,
+        message: "Transaction cancelled successfully",
+        data: cancelled,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

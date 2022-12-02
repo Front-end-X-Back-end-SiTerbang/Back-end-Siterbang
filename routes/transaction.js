@@ -12,5 +12,10 @@ router.get(
   c.transaction.getProductTransaction
 );
 router.put("/:id", mid.restrict.mustLogin, c.transaction.payment);
+router.get(
+  "/cancel/:id",
+  mid.restrict.mustLogin,
+  c.transaction.cancelTransaction
+);
 
 module.exports = router;
