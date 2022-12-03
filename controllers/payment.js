@@ -123,6 +123,13 @@ module.exports = {
           data: paymentExist,
         });
       }
+      if (paymentExist.number == number) {
+        return res.status(409).json({
+          status: false,
+          message: "This payment method already used",
+          data: paymentExist,
+        });
+      }
 
       const updatePayment = await Payment.update(
         { name, number, type },

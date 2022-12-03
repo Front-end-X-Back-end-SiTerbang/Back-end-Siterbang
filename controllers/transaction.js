@@ -155,7 +155,7 @@ module.exports = {
         where: { id: transaction.product_id },
       });
       const newStock = product.stock - transaction.total_passenger;
-      const newBalance = Payment.balance - transaction.total_order;
+      const newBalance = payment.balance - transaction.total_order;
       const updateStock = await Product.update(
         { stock: newStock },
         { where: { id: transaction.product_id } }
