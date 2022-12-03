@@ -1,4 +1,4 @@
-const { Product, Airport } = require("../models");
+const { Product, Airport, Airplane } = require("../models");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -64,11 +64,9 @@ module.exports = {
         origin_id,
         destination_id,
         price,
-        stock,
         transit_total,
         flight_date,
         depature_hours,
-        airline_id,
         airplane_id,
         estimation,
         code,
@@ -77,18 +75,26 @@ module.exports = {
         type,
       } = req.body;
 
+      const airplane = await Airplane.findOne({ where: { id: airplane_id } });
+      if (!airplane) {
+        return res.status(200).json({
+          status: false,
+          message: "Airplane not found",
+          data: airplane,
+        });
+      }
+
       const newProduct = await Product.create({
         origin_id,
         destination_id,
         price,
-        stock,
+        stock: airplane.capacity,
         transit_total,
         flight_date,
         depature_hours,
         airplane_id,
-        airline_id,
+        airline_id: airplane.airline_id,
         estimation,
-        create_date: Date.now(),
         code,
         gate,
         terminal,
@@ -141,7 +147,7 @@ module.exports = {
           flight_date,
           airline_id,
           airplane_id,
-          create_date: Date.now(),
+          create_date,
           estimation,
           code,
           gate,
