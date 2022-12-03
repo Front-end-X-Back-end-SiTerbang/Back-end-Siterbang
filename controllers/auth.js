@@ -2,6 +2,7 @@ require("dotenv").config();
 const { User } = require("../models");
 const { ROLE, TYPE, VERIFIED } = require("../utils/enum");
 const { JWT_SECRET, GOOGLE_SENDER_EMAIL } = process.env;
+const { Op } = require("sequelize");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -246,5 +247,47 @@ module.exports = {
     } catch (err) {
       console.log(err);
     }
+  },
+
+  search: async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search || "";
+      const offset = limit * page;
+      const totalRows = await User.count({
+          where:{
+              [Op.or]: [{name:{
+                  [Op.like]: '%'+search+'%'
+              }}, {email:{
+                  [Op.like]: '%'+search+'%'
+              }}]
+          }
+      }); 
+      const totalPage = Math.ceil(totalRows / limit);
+      const result = await User.findAll({
+          where:{
+              [Op.or]: [{name:{
+                  [Op.like]: '%'+search+'%'
+              }}, {email:{
+                  [Op.like]: '%'+search+'%'
+              }}]
+          },
+          offset: offset,
+          limit: limit,
+          order:[
+              ['id', 'DESC']
+          ]
+      });
+      res.json({
+          result: result,
+          page: page,
+          limit: limit,
+          totalRows: totalRows,
+          totalPage: totalPage
+      });
+    } catch (error) {
+        next(error);
+      }
   },
 };

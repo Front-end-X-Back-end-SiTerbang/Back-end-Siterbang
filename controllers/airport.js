@@ -1,4 +1,5 @@
 const { Airport } = require("../models");
+const { Op } = require("sequelize");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -51,7 +52,56 @@ module.exports = {
       next(error);
     }
   },
-  // need to add : search by query
+  search: async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const offset = limit * page;
+    const upper = search.toUpperCase();
+    const totalRows = await Airport.count({
+        where:{
+            [Op.or]: [{iata_code:{
+                [Op.like]: '%'+upper+'%'
+            }}, {name:{
+                [Op.like]: '%'+search+'%'
+            }}, {city:{
+                [Op.like]: '%'+search+'%'
+            }}, {country:{
+                [Op.like]: '%'+search+'%'
+            }}]
+        }
+    }); 
+    const totalPage = Math.ceil(totalRows / limit);
+    const result = await Airport.findAll({
+        where:{
+            [Op.or]: [{iata_code:{
+                [Op.like]: '%'+upper+'%'
+            }}, {name:{
+                [Op.like]: '%'+search+'%'
+            }}, {city:{
+                [Op.like]: '%'+search+'%'
+            }}, {country:{
+                [Op.like]: '%'+search+'%'
+            }}]
+        },
+        offset: offset,
+        limit: limit,
+        order:[
+            ['iata_code', 'DESC']
+        ]
+    });
+    res.json({
+        result: result,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage
+    });
+  } catch (error) {
+      next(error);
+    }
+},
   get: async (req, res, next) => {
     try {
       const { iata_code } = req.params;
