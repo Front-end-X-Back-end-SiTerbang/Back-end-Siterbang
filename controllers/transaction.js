@@ -147,7 +147,10 @@ module.exports = {
         return res.status(200).json({
           status: false,
           message: "Insufficient balance!",
-          data: payment.balance,
+          data: {
+            balance: payment.balance,
+            shortage: transaction.total_order - payment.balance,
+          },
         });
       }
 
