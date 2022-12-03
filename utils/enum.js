@@ -13,4 +13,6 @@ const VERIFIED = {
   FALSE: false,
 };
 
+
+
 module.exports = { ROLE, TYPE, VERIFIED };

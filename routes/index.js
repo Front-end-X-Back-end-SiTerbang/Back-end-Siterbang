@@ -6,6 +6,7 @@ const airplane = require("./airplane");
 const product = require("./product");
 const airport = require("./airports");
 const transaction = require("./transaction");
+const payment = require("./payment");
 const mid = require("../middlewares");
 const c = require("../controllers");
 
@@ -15,6 +16,7 @@ router.use("/airplanes", airplane);
 router.use("/products", product);
 router.use("/airports", airport);
 router.use("/transactions", transaction);
+router.use("/payments", payment);
 
 router.get(
   "/my-transactions",

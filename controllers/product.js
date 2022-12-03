@@ -31,7 +31,7 @@ module.exports = {
     });
 
     if (!getOr_id) {
-      return res.status(200).json({
+      return res.status(401).json({
         status: false,
         message: "Product with your origin not found",
         data: getOr_id,

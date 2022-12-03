@@ -133,17 +133,17 @@ module.exports = {
     try {
       const { id } = req.params;
       const transaction = await Transaction.findOne({ where: { id } });
-      const payment = await Payment.findAll({
+      const payment = await Payment.findOne({
         where: { user_id: transaction.user_id },
       });
 
-      if (!payment.length) {
+      if (!payment) {
         return res.status(200).json({
           status: false,
           message: "You haven't set any payment method",
           data: payment,
         });
-      } else if (payment.balance < transaction.balance) {
+      } else if (payment.balance < transaction.total_order) {
         return res.status(200).json({
           status: false,
           message: "Insufficient balance!",
@@ -155,7 +155,7 @@ module.exports = {
         where: { id: transaction.product_id },
       });
       const newStock = product.stock - transaction.total_passenger;
-
+      const newBalance = Payment.balance - transaction.total_order;
       const updateStock = await Product.update(
         { stock: newStock },
         { where: { id: transaction.product_id } }
@@ -164,6 +164,10 @@ module.exports = {
         { is_paid: true },
         { where: { id } }
       );
+      const updateBalance = await Payment.update(
+        { balance: newBalance },
+        { where: { user_id: transaction.user_id } }
+      );
       const updatedTransaction = await Transaction.findOne({
         where: { id },
         include: ["booking_details"],
@@ -171,7 +175,7 @@ module.exports = {
 
       return res.status(200).json({
         status: true,
-        message: "Payment success",
+        message: "Transaction success",
         data: { stock: newStock, transaction: updatedTransaction },
       });
     } catch (error) {
