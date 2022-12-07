@@ -24,7 +24,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       flight_date: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
       },
       depature_hours: {
         type: Sequelize.TIME,
@@ -38,9 +38,6 @@ module.exports = {
       estimation: {
         type: Sequelize.FLOAT,
       },
-      created_date: {
-        type: Sequelize.DATE,
-      },
       code: {
         type: Sequelize.STRING,
       },
@@ -53,7 +50,7 @@ module.exports = {
       type: {
         type: Sequelize.STRING,
       },
-      createdAt: {
+      created_date: {
         allowNull: false,
         type: Sequelize.DATE,
       },
