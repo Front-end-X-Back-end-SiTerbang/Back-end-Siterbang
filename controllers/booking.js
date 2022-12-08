@@ -14,13 +14,13 @@ module.exports = {
         return res.status(404).json({
           status: false,
           message: "Transaction Id not found",
-          data: airports,
+          data: booking,
         });
       }
       return res.status(200).json({
         status: true,
         message: "Success get booking details",
-        data: airports,
+        data: booking,
       });
     } catch (error) {
       next(error);
@@ -29,13 +29,17 @@ module.exports = {
   createBooking: async (req, res, next) => {
     try {
         const { transaction_id } = req.params;
-        const { passenger_name, passenger_phone, seat_number } = req.body;    
+        const { nik, passenger_name, passenger_phone} = req.body;
         
+        const max = 200;
+        const seat = Math.floor((Math.random() * max) + 1);
+
         const newBooking = await Booking_detail.create({
+          nik,
           transaction_id,
           passenger_name,
           passenger_phone,
-          seat_number,
+          seat_number:seat,
         }); 
         return res.status(201).json({
           status: true,
