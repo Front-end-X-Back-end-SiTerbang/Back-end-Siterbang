@@ -18,7 +18,35 @@ module.exports = {
         data: products,
       });
     } catch (error) {
-      next(err);
+      next(error);
+    }
+  },
+  get: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const product = await Product.findOne({
+        where: { id },
+      });
+
+      const origin = await Airport.findOne({
+        where: { id: product.origin_id },
+      });
+      const destination = await Airport.findOne({
+        where: { id: product.destination_id },
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "success get product details",
+        data: {
+          origin: origin.city,
+          destination: destination.city,
+          details: product,
+        },
+      });
+    } catch (error) {
+      next(error);
     }
   },
 
@@ -81,91 +109,129 @@ module.exports = {
       const origin_id = req.query.origin_id || "";
       const destination_id = req.query.destination_id || "";
       const date = req.query.flight_date || "";
-      const kelas = req.query.class || ""
+      const kelas = req.query.class || "";
       const offset = limit * page;
-      if(!kelas){
+      if (!kelas) {
         const totalRows = await Product.count({
-          where:{
-              [Op.and]: [{origin_id:{
-                  [Op.like]: '%'+origin_id+'%'
-              }}, {destination_id:{
-                  [Op.like]: '%'+destination_id+'%'
-              }}, {flight_date:{
-                  [Op.like]: '%'+date+'%'
-              }},
-            ]
-          }
-      }); 
-      const totalPage = Math.ceil(totalRows / limit);
-      const result = await Product.findAll({
-          where:{
-            [Op.and]: [{origin_id:{
-              [Op.like]: '%'+origin_id+'%'
-          }}, {destination_id:{
-              [Op.like]: '%'+destination_id+'%'
-          }}, {flight_date:{
-              [Op.like]: '%'+date+'%'
-          }}, 
-        ]
+          where: {
+            [Op.and]: [
+              {
+                origin_id: {
+                  [Op.like]: "%" + origin_id + "%",
+                },
+              },
+              {
+                destination_id: {
+                  [Op.like]: "%" + destination_id + "%",
+                },
+              },
+              {
+                flight_date: {
+                  [Op.like]: "%" + date + "%",
+                },
+              },
+            ],
+          },
+        });
+        const totalPage = Math.ceil(totalRows / limit);
+        const result = await Product.findAll({
+          where: {
+            [Op.and]: [
+              {
+                origin_id: {
+                  [Op.like]: "%" + origin_id + "%",
+                },
+              },
+              {
+                destination_id: {
+                  [Op.like]: "%" + destination_id + "%",
+                },
+              },
+              {
+                flight_date: {
+                  [Op.like]: "%" + date + "%",
+                },
+              },
+            ],
           },
           offset: offset,
           limit: limit,
-          order:[
-              ['id', 'DESC']
-          ]
-      });
-      res.json({
+          order: [["id", "DESC"]],
+        });
+        res.json({
           result: result,
           page: page,
           limit: limit,
           totalRows: totalRows,
-          totalPage: totalPage
-      });
+          totalPage: totalPage,
+        });
       }
       const totalRows = await Product.count({
-          where:{
-              [Op.and]: [{origin_id:{
-                  [Op.like]: '%'+origin_id+'%'
-              }}, {destination_id:{
-                  [Op.like]: '%'+destination_id+'%'
-              }}, {flight_date:{
-                  [Op.like]: '%'+date+'%'
-              }}, {type:{
-                  [Op.like]: '%'+kelas+'%'
-            }}, 
-            ]
-          }
-      }); 
+        where: {
+          [Op.and]: [
+            {
+              origin_id: {
+                [Op.like]: "%" + origin_id + "%",
+              },
+            },
+            {
+              destination_id: {
+                [Op.like]: "%" + destination_id + "%",
+              },
+            },
+            {
+              flight_date: {
+                [Op.like]: "%" + date + "%",
+              },
+            },
+            {
+              type: {
+                [Op.like]: "%" + kelas + "%",
+              },
+            },
+          ],
+        },
+      });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await Product.findAll({
-          where:{
-            [Op.and]: [{origin_id:{
-              [Op.like]: '%'+origin_id+'%'
-          }}, {destination_id:{
-              [Op.like]: '%'+destination_id+'%'
-          }}, {flight_date:{
-              [Op.like]: '%'+date+'%'
-           }}, {type:{
-              [Op.like]: '%'+kelas+'%'
-      }},
-        ]
-          },
-          offset: offset,
-          limit: limit,
-          order:[
-              ['id', 'DESC']
-          ]
+        where: {
+          [Op.and]: [
+            {
+              origin_id: {
+                [Op.like]: "%" + origin_id + "%",
+              },
+            },
+            {
+              destination_id: {
+                [Op.like]: "%" + destination_id + "%",
+              },
+            },
+            {
+              flight_date: {
+                [Op.like]: "%" + date + "%",
+              },
+            },
+            {
+              type: {
+                [Op.like]: "%" + kelas + "%",
+              },
+            },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+        order: [["id", "DESC"]],
       });
       res.json({
-          result: result,
-          page: page,
-          limit: limit,
-          totalRows: totalRows,
-          totalPage: totalPage
+        result: result,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
       });
     } catch (error) {
-        next(error);
-      }
+      next(error);
+    }
   },
   update: async (req, res, next) => {
     try {
