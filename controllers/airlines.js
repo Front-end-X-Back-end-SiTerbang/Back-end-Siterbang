@@ -6,7 +6,7 @@ module.exports = {
       const airlines = await Airline.findAll();
 
       if (!airlines.length) {
-        return res.status(200).json({
+        return res.status(404).json({
           status: false,
           message: "No Airlines found",
           data: airlines,
@@ -58,7 +58,7 @@ module.exports = {
       });
 
       if (!airlines) {
-        return res.status(200).json({
+        return res.status(404).json({
           status: false,
           message: "Airlines not found",
           data: airlines,
@@ -81,7 +81,7 @@ module.exports = {
 
       const airlineExist = await Airline.findOne({ where: { id } });
       if (!airlineExist) {
-        return res.status(200).json({
+        return res.status(404).json({
           status: false,
           message: "Airlines not found",
           data: airlineExist,

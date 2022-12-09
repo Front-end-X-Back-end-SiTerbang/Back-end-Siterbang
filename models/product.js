@@ -34,12 +34,11 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       stock: DataTypes.INTEGER,
       transit_total: DataTypes.INTEGER,
-      flight_date: DataTypes.DATE,
+      flight_date: DataTypes.STRING,
       depature_hours: DataTypes.TIME,
       airline_id: DataTypes.INTEGER,
       airplane_id: DataTypes.INTEGER,
       estimation: DataTypes.FLOAT,
-      created_date: DataTypes.DATE,
       code: DataTypes.STRING,
       gate: DataTypes.STRING,
       terminal: DataTypes.STRING,
@@ -47,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      createdAt: "created_date",
       modelName: "Product",
     }
   );

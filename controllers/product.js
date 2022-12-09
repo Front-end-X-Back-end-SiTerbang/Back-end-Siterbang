@@ -1,4 +1,5 @@
 const { Product, Airport, Airplane } = require("../models");
+const { Op } = require("sequelize");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -17,47 +18,38 @@ module.exports = {
         data: products,
       });
     } catch (error) {
-      next(err);
+      next(error);
     }
   },
-  find: async (req, res, next) => {
-    const { origin, destination, flight_date, type } = req.query;
+  get: async (req, res, next) => {
+    try {
+      const { id } = req.params;
 
-    const getOr_id = await Airport.findOne({
-      where: { city: origin },
-    });
-    const getDes_id = await Airport.findOne({
-      where: { city: destination },
-    });
-
-    if (!getOr_id) {
-      return res.status(401).json({
-        status: false,
-        message: "Product with your origin not found",
-        data: getOr_id,
+      const product = await Product.findOne({
+        where: { id },
       });
-    }
-    if (!getDes_id) {
+
+      const origin = await Airport.findOne({
+        where: { id: product.origin_id },
+      });
+      const destination = await Airport.findOne({
+        where: { id: product.destination_id },
+      });
+
       return res.status(200).json({
-        status: false,
-        message: "Product with your destination not found",
-        data: getDes_id,
+        status: true,
+        message: "success get product details",
+        data: {
+          origin: origin.city,
+          destination: destination.city,
+          details: product,
+        },
       });
-    }
-    const origin_id = getOr_id.id;
-    const destination_id = getDes_id.id;
-    const findProduct = await Product.findAll({
-      where: { origin_id, destination_id, flight_date, type },
-    });
-
-    if (!findProduct.length) {
-      return res.status(200).json({
-        status: false,
-        message: "Product with your origin or destination not found",
-        data: findProduct,
-      });
+    } catch (error) {
+      next(error);
     }
   },
+
   create: async (req, res, next) => {
     try {
       const {
@@ -105,6 +97,137 @@ module.exports = {
         status: true,
         message: "Product added successfully",
         data: newProduct,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  search: async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const origin_id = req.query.origin_id || "";
+      const destination_id = req.query.destination_id || "";
+      const date = req.query.flight_date || "";
+      const kelas = req.query.class || "";
+      const offset = limit * page;
+      if (!kelas) {
+        const totalRows = await Product.count({
+          where: {
+            [Op.and]: [
+              {
+                origin_id: {
+                  [Op.like]: "%" + origin_id + "%",
+                },
+              },
+              {
+                destination_id: {
+                  [Op.like]: "%" + destination_id + "%",
+                },
+              },
+              {
+                flight_date: {
+                  [Op.like]: "%" + date + "%",
+                },
+              },
+            ],
+          },
+        });
+        const totalPage = Math.ceil(totalRows / limit);
+        const result = await Product.findAll({
+          where: {
+            [Op.and]: [
+              {
+                origin_id: {
+                  [Op.like]: "%" + origin_id + "%",
+                },
+              },
+              {
+                destination_id: {
+                  [Op.like]: "%" + destination_id + "%",
+                },
+              },
+              {
+                flight_date: {
+                  [Op.like]: "%" + date + "%",
+                },
+              },
+            ],
+          },
+          offset: offset,
+          limit: limit,
+          order: [["id", "DESC"]],
+        });
+        res.json({
+          result: result,
+          page: page,
+          limit: limit,
+          totalRows: totalRows,
+          totalPage: totalPage,
+        });
+      }
+      const totalRows = await Product.count({
+        where: {
+          [Op.and]: [
+            {
+              origin_id: {
+                [Op.like]: "%" + origin_id + "%",
+              },
+            },
+            {
+              destination_id: {
+                [Op.like]: "%" + destination_id + "%",
+              },
+            },
+            {
+              flight_date: {
+                [Op.like]: "%" + date + "%",
+              },
+            },
+            {
+              type: {
+                [Op.like]: "%" + kelas + "%",
+              },
+            },
+          ],
+        },
+      });
+      const totalPage = Math.ceil(totalRows / limit);
+      const result = await Product.findAll({
+        where: {
+          [Op.and]: [
+            {
+              origin_id: {
+                [Op.like]: "%" + origin_id + "%",
+              },
+            },
+            {
+              destination_id: {
+                [Op.like]: "%" + destination_id + "%",
+              },
+            },
+            {
+              flight_date: {
+                [Op.like]: "%" + date + "%",
+              },
+            },
+            {
+              type: {
+                [Op.like]: "%" + kelas + "%",
+              },
+            },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+        order: [["id", "DESC"]],
+      });
+      res.json({
+        result: result,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
       });
     } catch (error) {
       next(error);

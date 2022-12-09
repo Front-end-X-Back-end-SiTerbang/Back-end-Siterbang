@@ -6,6 +6,8 @@ const airplane = require("./airplane");
 const product = require("./product");
 const airport = require("./airports");
 const transaction = require("./transaction");
+const user = require("./user");
+const booking = require("./booking");
 const payment = require("./payment");
 const mid = require("../middlewares");
 const c = require("../controllers");
@@ -17,10 +19,13 @@ router.use("/products", product);
 router.use("/airports", airport);
 router.use("/transactions", transaction);
 router.use("/payments", payment);
+router.use("/booking", booking);
+router.use("/user", user);
 
 router.get(
   "/my-transactions",
   mid.restrict.mustLogin,
   c.transaction.getUserTransaction
 );
+
 module.exports = router;

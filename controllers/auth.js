@@ -2,6 +2,7 @@ require("dotenv").config();
 const { User } = require("../models");
 const { ROLE, TYPE, VERIFIED } = require("../utils/enum");
 const { JWT_SECRET, GOOGLE_SENDER_EMAIL } = process.env;
+const { Op } = require("sequelize");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -21,12 +22,20 @@ module.exports = {
         confirm_password,
         phone,
         address,
+        gender,
         postal_code,
         photo,
         role = ROLE.BUYER,
         user_type = TYPE.BASIC,
         is_verified = VERIFIED.FALSE,
       } = req.body;
+
+      if (password.length < 8) {
+        return res.status(400).json({
+          status: false,
+          message: "At least password has 8 character",
+        });
+      }
 
       // Check Password
       if (password != confirm_password) {
@@ -56,6 +65,7 @@ module.exports = {
         password: encryptedPassword,
         phone,
         address,
+        gender,
         postal_code,
         photo,
         role,
@@ -97,7 +107,7 @@ module.exports = {
         { where: { id: user.id } }
       );
 
-      return res.redirect("http://siterbang.km3ggwp.com/login");
+      return res.redirect("http://siterbang-staging.km3ggwp.com/login");
     } catch (err) {
       next(err);
     }
@@ -184,7 +194,7 @@ module.exports = {
           to: req.body.email.toLowerCase(),
           subject: "Reset Your Password!",
           html: resetPassword(
-            `http://siterbang-develop.up.railway.app/auth/reset-password?token=${token}`
+            `http://siterbang-staging.km3ggwp.com/auth/reset-password/${token}`
           ),
         };
         await sendEmail.sendEmail(templateResetPassword);
@@ -196,32 +206,36 @@ module.exports = {
         data: req.body.email,
       });
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
 
   resetPassword: async (req, res, next) => {
     try {
-      const { token } = req.query;
-      const { new_password, confirm_new_password } = req.body;
-
-      console.log("TOKEN :", token);
+      const { token } = req.params;
+      const { password, confirm_new_password } = req.body;
 
       if (!token)
         return res.status(401).json({
           status: false,
           message: "invalid token",
-          data: null,
         });
-      if (new_password != confirm_new_password)
-        return res.status(400)({
+
+      if (password.length < 8) {
+        return res.status(400).json({
+          status: false,
+          message: "At least password has 8 character!",
+        });
+      }
+
+      if (password != confirm_new_password)
+        return res.status(400).json({
           status: false,
           message: "password doesn't match!",
-          data: null,
         });
 
       const payload = jwt.verify(token, JWT_SECRET);
-      const encryptedPassword = await bcrypt.hash(new_password, 10);
+      const encryptedPassword = await bcrypt.hash(password, 10);
 
       const user = await User.update(
         { password: encryptedPassword },
@@ -233,7 +247,61 @@ module.exports = {
         message: "Update password success!",
       });
     } catch (err) {
-      next(err);
+      console.log(err);
+    }
+  },
+
+  search: async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search || "";
+      const offset = limit * page;
+      const totalRows = await User.count({
+        where: {
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+            {
+              email: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+      });
+      const totalPage = Math.ceil(totalRows / limit);
+      const result = await User.findAll({
+        where: {
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+            {
+              email: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+        order: [["id", "DESC"]],
+      });
+      res.json({
+        result: result,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
+      });
+    } catch (error) {
+      next(error);
     }
   },
 };

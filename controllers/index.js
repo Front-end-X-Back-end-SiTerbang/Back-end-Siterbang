@@ -5,6 +5,8 @@ const product = require("./product");
 const airport = require("./airport");
 const transaction = require("./transaction");
 const payment = require("./payment");
+const user = require("./user");
+const booking = require("./booking");
 
 module.exports = {
   auth,
@@ -14,4 +16,6 @@ module.exports = {
   airport,
   transaction,
   payment,
+  booking,
+  user,
 };
