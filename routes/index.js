@@ -5,10 +5,13 @@ const airlines = require("./airlines");
 const airplane = require("./airplane");
 const product = require("./product");
 const airport = require("./airports");
+const user = require("./user");
 
 router.use("/auth", auth);
 router.use("/airlines", airlines);
 router.use("/airplanes", airplane);
 router.use("/products", product);
 router.use("/airports", airport);
+router.use("/user", user);
+
 module.exports = router;

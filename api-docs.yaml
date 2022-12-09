@@ -39,13 +39,15 @@ paths:
                 confirm_password:
                   type: string
             examples:
-              name: John Doe
-              email: johndoe@mail.com
-              password: admin123
-              confirm_password: admin123
+              example-body:
+                value:
+                  name: John Doe
+                  email: johndoe@mail.com
+                  password: admin123
+                  confirm_password: admin123
       responses:
         "201":
-          description: Regist User Success
+          description: Created
           content:
             application/json:
               schema:
@@ -195,9 +197,11 @@ paths:
                   type: string
                   format: email
             examples:
-              email: johndoe@mail.com
+              example-body:
+                value:
+                  email: johndoe@mail.com
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -220,11 +224,11 @@ paths:
                     message: request forgot-password successful
                     data:
                       email: johndoe@gmail.com
-        '404':
+        "404":
           description: Not Found
-        '500':
+        "500":
           description: Internal Server Error
-  /auth/reset-password:
+  /auth/reset-password/{token}:
     post:
       summary: Reset Password
       description: Reset Password Account
@@ -263,7 +267,7 @@ paths:
                   message:
                     type: string
               examples:
-                succesful:
+                succesfull:
                   value:
                     status: true
                     message: Update Password Success
@@ -308,6 +312,8 @@ paths:
       description: Get All Airlines
       tags:
         - Airlines
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -327,18 +333,1180 @@ paths:
                         type: string
                       phone:
                         type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: success get all airlines data
+                    data:
+                      name: Garuda Indonesia
+                      phone: 09875367289
+          '400':
+            description: Bad Request
+          '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+          '404':
+            description: Not Found
+          '500':
+            description: Internal Server Error
   /airlines:
     post:
       summary: Create Airlines
       description: Create An Airlines
       tags:
         - Airlines
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+            examples:
+              create-airlines:
+                value:
+                  name: Garuda Indonesia
+                  phone: 09875367289
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: Airlines added successfully!
+                    data:
+                      name: Garuda Indonesia
+                      phone: 09875367289
+        '409':
+          description: Already Exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-already-exist:
+                  value:
+                    status: false
+                    message: airlines already exist
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '500':
+          description: Internal Server Error
+  /airlines/{id}:
+    get:
+      summary: Get Airlines
+      description: Get Airlines
+      tags:
+        - Airlines
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: success get airlines
+                    data:
+                      name: Garuda Indonesia
+                      phone: 09875367289
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '500':
+          description: Internal Server Error
+  /airlines/{id}:
+    put:
+      summary: Update Airlines
+      description: Update An Airlines
+      tags:
+        - Airlines
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+            examples:
+              update-airlines:
+                value:
+                  name: Batik Air
+                  phone: 067899083
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: Airlines update successfully
+                    data:
+                      name: Batik Air
+                      phone: 067899083
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: Not Found
+                    data: null
+        '500':
+          description: Internal Server Error
+  /airlines/{id}:
+    delete:
+      summary: Delete Airlines
+      description: Delete An Airlines
+      tags:
+        - Airlines
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: Airlines Deleted Successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error       
+  /airplanes:
+    get:
+      summary: Get All Airplane
+      description: Get All Airplane
+      tags:
+        - Airplanes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airlines_id:
+                        type: integer
+                      type:
+                        type: string
+                      capacity:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    name: Lion First-Class
+                    airlines_id: 1
+                    type: Boeing 777-400
+                    capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /airplanes:
+    post:
+      summary: Create Airplanes
+      description: Create An Airplanes
+      tags:
+        - Airplanes
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                airplane_id:
+                  type: integer
+                tipe:
+                  type: string
+                capacity:
+                  type: integer
+            examples:
+              create-an-airplanes:
+                value:
+                  name: Lion First-Class
+                  airlines_id: 1
+                  type: Boeing 777-400
+                  capacity: 200
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-already:
+                  value:
+                    status: false
+                    message: Airplane Already Exist
+                    data: null
+        '500':
+          description: Internal Server Error
+  /airplanes/{id}:
+    get:
+      summary: Get Airplanes By Id
+      description: Get Airplanes By Id
+      tags:
+        - Airplanes
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        airplane_id:
+                          type: integer
+                        type:
+                          type: string
+                        capacity:
+                          type: integer
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Success Get Airplane
+                      data:
+                        name: Lion First-Class
+                        airlines_id: 1
+                        type: Boeing 777-400
+                        capacity: 200
+        '401':
+            description: Unauthorized
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                      message:
+                        type: string
+                  examples:
+                    status-unauthorized:
+                      value:
+                        status: false
+                        message: You're not authorized
+        '404':
+          description: Not Found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-not-found:
+                    value:
+                      status: false
+                      message: Airplanes Not Found
+                      data: null
+        '500':
+          description: Internal Server Error
+  /airplanes/airlines-id/{id}:
+    get:
+      summary: Get Airplanes By Airlines Id
+      description: Get Airplanes By Airlines Id
+      tags:
+        - Airplanes
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        airlines_id:
+                          type: integer
+                        type:
+                          type: string
+                examples:
+                  status-ok:
+                    value:
+                      name: Lion First-Class
+                      airlines_id: 1
+                      type: Boeing 777-400
+                      capacity: 200
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /airplanes/{id}:
+    put:
+      summary: Update Airplanes
+      description: Update An Airplanes By Id
+      tags:
+        - Airplanes
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                airlines_id:
+                  type: integer
+                type:
+                  type: string
+                capacity:
+                  type: integer
+            examples:
+              example-body:
+                value:
+                  name: Lion First-Class
+                  airlines_id: 1
+                  type: Boeing 777-400
+                  capacity: 200
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        airlines_id:
+                          type: integer
+                        type:
+                          type: string
+                        capacity:
+                          type: integer
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Airplanes Updated Successfully
+                      data:
+                        name: LA Evos-Special Edition
+                        airlines_id: 2
+                        type: Airbus A380-800
+                        capacity: 400
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+  /airplanes/{id}:
+    delete:
+      summary: Delete Airplanes
+      description: Delete An Airplane
+      tags:
+        - Airplanes
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airlines_id:
+                        type: integer
+                      tipe:
+                        type: integer
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: Airplanes Deleted Successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're Not Authorized
+                    data: null
+        '500':
+          description: Internal Server Error
+  /airports:
+    post:
+      summary: Create Airports
+      description: Create An Airports
+      tags:
+        - Airports
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                iata_code:
+                  type: string
+                name:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+            examples:
+              create-an-airports:
+                value:
+                  iata_code: CKG
+                  name: Soekarno-Hatta
+                  city: Jakarta
+                  country: Indonesia
+      responses:
+        '201':
+          description: Created
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        iata_code:
+                          type: string
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                examples:
+                  status-created:
+                    status: true
+                    message: Airport Added Successfully
+                    data:
+                      iata_code: CKG
+                      name: Soekarno-Hatta
+                      city: Jakarta
+                      country: Indonesia
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-already:
+                    value:
+                      status: false
+                      message: Airport Already Exist
+                      data: null
+        '500':
+          description: Internal Server Error
+  /airports/all:
+    get:
+      summary: Get All Airports
+      description: Get All Airports
+      tags:
+        - Airports
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        iata_code:
+                          type: string
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Success Get All Airports Data
+                      data:
+                        iata-code: CKG
+                        name: Soekarno-Hatta
+                        city: Jakarta
+                        country: Indonesia
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '404':
+          description: Not Found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-not-found:
+                    value:
+                      status: false
+                      message: No Airports Found
+                      data: null
+        '500':
+          description: Internal Server Error
+  /airports/{iata_code}:
+    get:
+      summary: Get Airports By Iata Code
+      description: Get Airports By Iata Code
+      tags:
+        - Airports
       parameters:
         - schema:
             type: string
-          in: query
-          name: token
+        - in: path
+          name: iata_code
           required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        iata_code:
+                          type: string
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Success Get Airports
+                      data:
+                        iata_code: CGK
+                        name: Soekarno-Hatta
+                        city: Jakarta
+                        country: Indonesia
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '500':
+          description: Internal Server Error
+  /airports/{iata_code}:
+    put:
+      summary: Update An Airport By Iata_Code
+      description: Update An Airport By Iata_Code
+      tags:
+        - Airports
+      parameters:
+        - schema:
+            type: string
+        - in: path
+          name: iata_code
+          required: true
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+            examples:
+              update-airport:
+                value:
+                  name: Soekarno Hatta
+                  city: Jakarta
+                  country: Indonesia
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Update Airport Successfully
+                      data:
+                        name: Soekarno Hatta
+                        city: Jakarta
+                        country: Indonesia
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-unauthorized:
+                    value:
+                      status: false
+                      message: You're Not Authorized
+                      data: null
+        '404':
+          description: Not Found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status-not-found:
+                    value:
+                      status: false
+                      message: Airports Not Found
+                      data: null
+        '500':
+          description: Internal Server Error
+  /airports/{iata_code}:
+    delete:
+      summary: Delete An Airport By Iata Code
+      description: Delete An Airport Iata Code
+      tags:
+        - Airports
+      parameters:
+        - schema:
+            type: string
+        - in: path
+          name: iata_code
+          required: true
+      responses:
+        '200':
+          description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        iata_code:
+                          type: string
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                examples:
+                  status-ok:
+                    value:
+                      status: true
+                      message: Airport Deleted Successfully
+                      data:
+                        iata_code: CGK
+                        name: Soekarno Hatta
+                        city: Jakarta
+                        country: Indonesia
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data: null
+                examples:
+                  status: false
+                  message: You're Not Authorized
+                  data: null
+        '500':
+          description: Internal Server Error
+    
+
+
+
+                      
+    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                
+      
       
                         
 

@@ -6,7 +6,7 @@ module.exports = {
       const airplanes = await Airplane.findAll();
 
       if (!airplanes.length) {
-        return res.status(200).json({
+        return res.status(404).json({
           status: false,
           message: "No Airplanes found",
           data: airplanes,
@@ -65,7 +65,7 @@ module.exports = {
       }
       return res.status(200).json({
         status: true,
-        message: "success get all airplane",
+        message: "success get airplane",
         data: airplane,
       });
     } catch (error) {

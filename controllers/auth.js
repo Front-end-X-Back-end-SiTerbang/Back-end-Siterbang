@@ -22,6 +22,7 @@ module.exports = {
         confirm_password,
         phone,
         address,
+        gender,
         postal_code,
         photo,
         role = ROLE.BUYER,
@@ -64,6 +65,7 @@ module.exports = {
         password: encryptedPassword,
         phone,
         address,
+        gender,
         postal_code,
         photo,
         role,
@@ -256,38 +258,50 @@ module.exports = {
       const search = req.query.search || "";
       const offset = limit * page;
       const totalRows = await User.count({
-          where:{
-              [Op.or]: [{name:{
-                  [Op.like]: '%'+search+'%'
-              }}, {email:{
-                  [Op.like]: '%'+search+'%'
-              }}]
-          }
-      }); 
+        where: {
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+            {
+              email: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+      });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await User.findAll({
-          where:{
-              [Op.or]: [{name:{
-                  [Op.like]: '%'+search+'%'
-              }}, {email:{
-                  [Op.like]: '%'+search+'%'
-              }}]
-          },
-          offset: offset,
-          limit: limit,
-          order:[
-              ['id', 'DESC']
-          ]
+        where: {
+          [Op.or]: [
+            {
+              name: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+            {
+              email: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+        order: [["id", "DESC"]],
       });
       res.json({
-          result: result,
-          page: page,
-          limit: limit,
-          totalRows: totalRows,
-          totalPage: totalPage
+        result: result,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
       });
     } catch (error) {
-        next(error);
-      }
+      next(error);
+    }
   },
 };
