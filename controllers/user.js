@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Payment } = require("../models");
 const imagekit = require("../utils/media_handling/image-kit");
 
 module.exports = {
