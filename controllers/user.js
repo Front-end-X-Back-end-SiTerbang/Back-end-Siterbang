@@ -16,15 +16,18 @@ module.exports = {
         });
       }
 
-      const updated = await User.update({
-        name,
-        email,
-        phone,
-        address,
-        phone,
-        postal_code,
-        gender,
-      });
+      const updated = await User.update(
+        {
+          name,
+          email,
+          phone,
+          address,
+          phone,
+          postal_code,
+          gender,
+        },
+        { where: { id } }
+      );
 
       return res.status(200).json({
         status: true,
