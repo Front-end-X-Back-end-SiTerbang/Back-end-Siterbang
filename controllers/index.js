@@ -13,4 +13,5 @@ module.exports = {
   product,
   airport,
   booking,
+  user,
 };
