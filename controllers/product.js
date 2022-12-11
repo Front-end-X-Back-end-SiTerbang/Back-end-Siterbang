@@ -1,5 +1,6 @@
 const { Product, Airport, Airplane } = require("../models");
 const { Op } = require("sequelize");
+const { FLIGHT_CLASS } = require("../utils/enum");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -55,17 +56,17 @@ module.exports = {
       const {
         origin_id,
         destination_id,
-        price,
         transit_total,
         flight_date,
         depature_hours,
         airplane_id,
         estimation,
-        code,
+
         gate,
         terminal,
-        type,
       } = req.body;
+
+      let { price, type } = req.body;
 
       const airplane = await Airplane.findOne({ where: { id: airplane_id } });
       if (!airplane) {
@@ -75,11 +76,35 @@ module.exports = {
           data: airplane,
         });
       }
+      const classes = type;
+      if (type == FLIGHT_CLASS.ECONOMY) {
+      } else if (type == FLIGHT_CLASS.BUSINESS) {
+        price = price + (price * 15) / 100;
+      } else if (type == FLIGHT_CLASS.FIRST) {
+        price = price + (price * 45) / 100;
+      } else {
+        return res.status(422).json({
+          status: false,
+          message: "Flight Classes not Found",
+          data: null,
+        });
+      }
+      function makeid(length) {
+        let result = "";
+        let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+        return result;
+      }
 
       const newProduct = await Product.create({
         origin_id,
         destination_id,
-        price,
+        price: price,
         stock: airplane.capacity,
         transit_total,
         flight_date,
@@ -87,10 +112,10 @@ module.exports = {
         airplane_id,
         airline_id: airplane.airline_id,
         estimation,
-        code,
+        code: makeid(5),
         gate,
         terminal,
-        type,
+        type: classes,
       });
 
       return res.status(201).json({
