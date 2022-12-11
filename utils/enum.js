@@ -13,6 +13,10 @@ const VERIFIED = {
   FALSE: false,
 };
 
+const FLIGHT_CLASS = {
+  ECONOMY: "ECONOMY CLASS",
+  BUSINESS: "BUSINESS CLASS",
+  FIRST: "FIRST CLASS",
+};
 
-
-module.exports = { ROLE, TYPE, VERIFIED };
+module.exports = { ROLE, TYPE, VERIFIED, FLIGHT_CLASS };
