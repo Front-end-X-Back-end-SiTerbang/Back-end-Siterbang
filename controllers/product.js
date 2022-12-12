@@ -61,7 +61,6 @@ module.exports = {
         depature_hours,
         airplane_id,
         estimation,
-
         gate,
         terminal,
       } = req.body;
@@ -194,25 +193,13 @@ module.exports = {
       const totalRows = await Product.count({
         where: {
           [Op.and]: [
-            {
-              origin_id: {
-                [Op.like]: "%" + origin_id + "%",
-              },
+            {origin_id: {[Op.like]: "%" + origin_id + "%",},
             },
-            {
-              destination_id: {
-                [Op.like]: "%" + destination_id + "%",
-              },
+            {destination_id: {[Op.like]: "%" + destination_id + "%",},
             },
-            {
-              flight_date: {
-                [Op.like]: "%" + date + "%",
-              },
+            {flight_date: {[Op.like]: "%" + date + "%",},
             },
-            {
-              type: {
-                [Op.like]: "%" + kelas + "%",
-              },
+            {type: {[Op.like]: "%" + kelas + "%",},
             },
           ],
         },
@@ -269,7 +256,6 @@ module.exports = {
         flight_date,
         airplane_id,
         estimation,
-        code,
         gate,
         terminal,
         type,
@@ -297,7 +283,6 @@ module.exports = {
           airplane_id,
           create_date,
           estimation,
-          code,
           gate,
           terminal,
           type,
