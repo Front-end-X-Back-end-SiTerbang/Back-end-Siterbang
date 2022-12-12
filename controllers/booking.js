@@ -98,4 +98,16 @@ module.exports = {
       next(error);
     }
   },
+  count: async (req, res, next) => {
+    try {
+      const count = await Booking_detail.count();
+      return res.status(200).json({
+        status: true,
+        message: "success count passengers data",
+        data: count,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

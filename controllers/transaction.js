@@ -224,4 +224,39 @@ module.exports = {
       next(error);
     }
   },
+  countAll: async (req, res, next) => {
+    try {
+      const countAll = await Transaction.count();
+      const countUnpaid = await Transaction.count({
+        where: { is_paid: false },
+      });
+      const countPaid = await Transaction.count({ where: { is_paid: true } });
+
+      return res.status(200).json({
+        status: true,
+        message: "success count transaction data",
+        data: {
+          transactions: countAll,
+          unpaid: countUnpaid,
+          paid: countPaid,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  revenue: async (req, res, next) => {
+    try {
+      const total = await Transaction.sum("total_order", {
+        where: { is_paid: true },
+      });
+      return res.status(200).json({
+        status: true,
+        message: "success get total income",
+        data: total,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

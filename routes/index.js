@@ -22,10 +22,25 @@ router.use("/payments", payment);
 router.use("/booking", booking);
 router.use("/user", user);
 
+//get user transaction
 router.get(
   "/my-transactions",
   mid.restrict.mustLogin,
   c.transaction.getUserTransaction
 );
+
+//stats
+router.get("/total-airline", mid.restrict.mustAdmin, c.airline.count);
+router.get("/total-airplane", mid.restrict.mustAdmin, c.airplane.count);
+router.get("/total-airport", mid.restrict.mustAdmin, c.airport.count);
+router.get("/total-booking", mid.restrict.mustAdmin, c.booking.count);
+router.get("/total-product", mid.restrict.mustAdmin, c.product.count);
+router.get(
+  "/total-transaction",
+  mid.restrict.mustAdmin,
+  c.transaction.countAll
+);
+router.get("/total-revenue", mid.restrict.mustAdmin, c.transaction.revenue);
+router.get("/total-user", mid.restrict.mustAdmin, c.user.countUser);
 
 module.exports = router;

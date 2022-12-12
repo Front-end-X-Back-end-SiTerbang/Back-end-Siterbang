@@ -332,4 +332,16 @@ module.exports = {
       nexy(error);
     }
   },
+  count: async (req, res, next) => {
+    try {
+      const count = await Product.count();
+      return res.status(200).json({
+        status: true,
+        message: "success count product data",
+        data: count,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
