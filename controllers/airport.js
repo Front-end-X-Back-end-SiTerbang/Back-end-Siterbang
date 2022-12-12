@@ -209,4 +209,25 @@ module.exports = {
       next(error);
     }
   },
+  count: async (req, res, next) => {
+    try {
+      const countLocal = await Airport.count({
+        where: { country: "INDONESIA" },
+      });
+      const countIntl = await Airport.count({
+        where: { country: { [Op.not]: "INDONESIA" } },
+      });
+      
+      return res.status(200).json({
+        status: true,
+        message: "success count Airport data",
+        data: {
+          indonesian_airport: countLocal,
+          overseas_airport: countIntl,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

@@ -1,4 +1,4 @@
-const { Transaction, Product, Payment } = require("../models");
+const { Transaction, Product, Payment, Booking_detail } = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 
@@ -136,6 +136,15 @@ module.exports = {
       const payment = await Payment.findOne({
         where: { user_id: transaction.user_id },
       });
+      const detailsCount = await Booking_detail.count({
+        where: { transaction_id: id },
+      });
+      if (detailsCount < transaction.total_passenger) {
+        return res.status(200).json({
+          status: false,
+          message: "All passenger data must be filled in",
+        });
+      }
 
       if (!payment) {
         return res.status(200).json({
@@ -210,6 +219,41 @@ module.exports = {
         status: true,
         message: "Transaction cancelled successfully",
         data: cancelled,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  countAll: async (req, res, next) => {
+    try {
+      const countAll = await Transaction.count();
+      const countUnpaid = await Transaction.count({
+        where: { is_paid: false },
+      });
+      const countPaid = await Transaction.count({ where: { is_paid: true } });
+
+      return res.status(200).json({
+        status: true,
+        message: "success count transaction data",
+        data: {
+          transactions: countAll,
+          unpaid: countUnpaid,
+          paid: countPaid,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  revenue: async (req, res, next) => {
+    try {
+      const total = await Transaction.sum("total_order", {
+        where: { is_paid: true },
+      });
+      return res.status(200).json({
+        status: true,
+        message: "success get total income",
+        data: total,
       });
     } catch (error) {
       next(error);

@@ -153,4 +153,16 @@ module.exports = {
       next(error);
     }
   },
+  count: async (req, res, next) => {
+    try {
+      const count = await Airplane.count();
+      return res.status(200).json({
+        status: true,
+        message: "success count airplane data",
+        data: count,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

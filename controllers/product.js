@@ -67,12 +67,26 @@ module.exports = {
 
       let { price, type } = req.body;
 
-      const airplane = await Airplane.findOne({ where: { id: airplane_id } });
+      const airplane = await Airplane.findOne({
+        where: { id: airplane_id },
+        include: ["airline"],
+      });
       if (!airplane) {
         return res.status(200).json({
           status: false,
           message: "Airplane not found",
           data: airplane,
+        });
+      }
+      if (airplane.capacity <= 10) {
+        return res.status(200).json({
+          status: false,
+          message: "Airplane capacity is to small",
+          data: {
+            airplane: airplane.name,
+            airline: airplane.airline.name,
+            capacity: airplane.capacity,
+          },
         });
       }
       const classes = type;
@@ -193,14 +207,10 @@ module.exports = {
       const totalRows = await Product.count({
         where: {
           [Op.and]: [
-            {origin_id: {[Op.like]: "%" + origin_id + "%",},
-            },
-            {destination_id: {[Op.like]: "%" + destination_id + "%",},
-            },
-            {flight_date: {[Op.like]: "%" + date + "%",},
-            },
-            {type: {[Op.like]: "%" + kelas + "%",},
-            },
+            { origin_id: { [Op.like]: "%" + origin_id + "%" } },
+            { destination_id: { [Op.like]: "%" + destination_id + "%" } },
+            { flight_date: { [Op.like]: "%" + date + "%" } },
+            { type: { [Op.like]: "%" + kelas + "%" } },
           ],
         },
       });
@@ -320,6 +330,18 @@ module.exports = {
       });
     } catch (error) {
       nexy(error);
+    }
+  },
+  count: async (req, res, next) => {
+    try {
+      const count = await Product.count();
+      return res.status(200).json({
+        status: true,
+        message: "success count product data",
+        data: count,
+      });
+    } catch (error) {
+      next(error);
     }
   },
 };

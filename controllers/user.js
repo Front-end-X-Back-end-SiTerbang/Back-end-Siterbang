@@ -126,4 +126,20 @@ module.exports = {
       next(err);
     }
   },
+  countUser: async (req, res, next) => {
+    try {
+      const countUser = await User.count({ where: { role: "BUYER" } });
+      const countAdmin = await User.count({ where: { role: "ADMIN" } });
+      return res.status(200).json({
+        status: true,
+        message: "success count user data",
+        data: {
+          user: countUser,
+          admin: countAdmin,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
