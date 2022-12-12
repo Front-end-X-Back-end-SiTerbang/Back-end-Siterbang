@@ -7,14 +7,14 @@ const multer = require("multer");
 const upload = multer();
 
 router.put(
-  "/profile/photo/:id",
+  "/profile/photo",
   mid.restrict.mustLogin,
   upload.single("photo"),
   c.user.updateAvatar
 );
-router.put("/profile/:id", mid.restrict.mustLogin, c.user.updateProfile);
+router.put("/profile", mid.restrict.mustLogin, c.user.updateProfile);
 router.put(
-  "/profile/change-password/:id",
+  "/profile/change-password",
   mid.restrict.mustLogin,
   c.user.updatePasswords
 );
