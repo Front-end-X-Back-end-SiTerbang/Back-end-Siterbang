@@ -1,38 +1,34 @@
 const { User, Payment } = require("../models");
 const imagekit = require("../utils/media_handling/image-kit");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env;
+const bcrypt = require("bcrypt");
 
 module.exports = {
   updateProfile: async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const { name, email, phone, address, gender, is_verified, postal_code } =
-        req.body;
+      const token = req.headers["authorization"];
+      const user = jwt.verify(token, JWT_SECRET);
+      const { name, email, phone, address, gender, postal_code } = req.body;
 
-      const user = await User.findOne({ where: { id } });
-      if (!user) {
-        return res.status(400).json({
-          status: false,
-          message: "User not found!",
-        });
-      }
-
-      const updated = await User.update(
+      const update = await User.update(
         {
           name,
           email,
           phone,
           address,
-          phone,
           postal_code,
           gender,
         },
-        { where: { id } }
+        { where: { id: user.id } }
       );
-
+      const updated = await User.findOne({
+        where: { id: user.id },
+      });
       return res.status(200).json({
         status: true,
         message: "Update profile successfully!",
-        data: user,
+        data: updated,
       });
     } catch (err) {
       next(err);
@@ -40,16 +36,19 @@ module.exports = {
   },
   updatePasswords: async (req, res, next) => {
     try {
-      const { id } = req.params;
+      const token = req.headers["authorization"];
+      const user = jwt.verify(token, JWT_SECRET);
       const { old_password, password, confirm_new_password } = req.body;
 
-      const user = await User.findOne({ where: { id } });
+      const userPw = await User.findOne({
+        where: { id: user.id },
+      });
 
-      const match = await bcrypt.compare(old_password, user.password);
+      const match = await bcrypt.compare(old_password, userPw.password);
       if (!match) {
         return res.status(401).json({
           status: false,
-          message: "password doesn't match",
+          message: "wrong password",
           data: null,
         });
       }
@@ -71,9 +70,12 @@ module.exports = {
 
       const encryptedPassword = await bcrypt.hash(password, 10);
 
-      const updated = await User.update({
-        password: encryptedPassword,
-      });
+      const updated = await User.update(
+        {
+          password: encryptedPassword,
+        },
+        { where: { id: user.id } }
+      );
 
       return res.status(200).json({
         status: true,
@@ -85,17 +87,10 @@ module.exports = {
   },
   updateAvatar: async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const file = req.file.buffer.toString("base64");
-      const user = await User.findOne({ where: { id } });
+      const token = req.headers["authorization"];
+      const user = jwt.verify(token, JWT_SECRET);
 
-      if (!user) {
-        return res.status(400).json({
-          status: false,
-          message: "User not found",
-          data: null,
-        });
-      }
+      const file = req.file.buffer.toString("base64");
 
       if (!file) {
         return res.status(400).json({
@@ -114,7 +109,7 @@ module.exports = {
         {
           photo: uploadPhoto.url,
         },
-        { where: { id } }
+        { where: { id: user.id } }
       );
 
       return res.status(200).json({

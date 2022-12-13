@@ -6,14 +6,14 @@ const mid = require("../middlewares");
 const upload = require("../utils/media_handling/storage");
 
 router.put(
-  "/profile/photo/:id",
+  "/profile/photo",
   mid.restrict.mustLogin,
   upload.image.single("photo"),
   c.user.updateAvatar
 );
-router.put("/profile/:id", mid.restrict.mustLogin, c.user.updateProfile);
+router.put("/profile", mid.restrict.mustLogin, c.user.updateProfile);
 router.put(
-  "/profile/change-password/:id",
+  "/profile/change-password",
   mid.restrict.mustLogin,
   c.user.updatePasswords
 );

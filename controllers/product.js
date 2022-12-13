@@ -1,11 +1,15 @@
-const { Product, Airport, Airplane } = require("../models");
+const { Product, Airport, Airplane, Airline } = require("../models");
 const { Op } = require("sequelize");
 const { FLIGHT_CLASS } = require("../utils/enum");
 
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll({
+        include: [
+          { model: Airline, as: "airline", attributes: ["name"] },
+        ],
+      });
 
       if (!products.length) {
         return res.status(200).json({
@@ -144,113 +148,204 @@ module.exports = {
     try {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      const origin_id = req.query.origin_id || "";
-      const destination_id = req.query.destination_id || "";
+      const origin = req.query.origin || "";
+      const destination = req.query.destination || "";
       const date = req.query.flight_date || "";
       const kelas = req.query.class || "";
       const offset = limit * page;
-      if (!kelas) {
-        const totalRows = await Product.count({
-          where: {
-            [Op.and]: [
-              {
-                origin_id: {
-                  [Op.like]: "%" + origin_id + "%",
+      const roundTrip = req.query.roundTrip;
+      const returnDate = req.query.returnDate;
+
+      const orig = await Airport.findOne({
+        where: { city: origin },
+      });
+      const dest = await Airport.findOne({
+        where: { city: destination },
+      });
+
+      if (roundTrip) {
+        if (!kelas) {
+          // ROUND-TRIP, ALL CLASSES
+          const totalRows = await Product.count({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { origin_id: orig.id },
+                    { destination_id: dest.id },
+                    { flight_date: { [Op.like]: "%" + date + "%" } },
+                  ],
                 },
-              },
-              {
-                destination_id: {
-                  [Op.like]: "%" + destination_id + "%",
+                {
+                  [Op.and]: [
+                    { origin_id: dest.id },
+                    { destination_id: orig.id },
+                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                  ],
                 },
-              },
-              {
-                flight_date: {
-                  [Op.like]: "%" + date + "%",
+              ],
+            },
+          });
+          const totalPage = Math.ceil(totalRows / limit);
+          const result = await Product.findAll({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { origin_id: orig.id },
+                    { destination_id: dest.id },
+                    { flight_date: { [Op.like]: "%" + date + "%" } },
+                  ],
                 },
-              },
-            ],
-          },
-        });
-        const totalPage = Math.ceil(totalRows / limit);
-        const result = await Product.findAll({
-          where: {
-            [Op.and]: [
-              {
-                origin_id: {
-                  [Op.like]: "%" + origin_id + "%",
+                {
+                  [Op.and]: [
+                    { origin_id: dest.id },
+                    { destination_id: orig.id },
+                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                  ],
                 },
-              },
-              {
-                destination_id: {
-                  [Op.like]: "%" + destination_id + "%",
+              ],
+            },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
+            offset: offset,
+            limit: limit,
+            order: [["id", "ASC"]],
+          });
+          res.json({
+            result: result,
+            page: page,
+            limit: limit,
+            totalRows: totalRows,
+            totalPage: totalPage,
+          });
+        } else {
+          // ROUND-TRIP, SPECIFIC CLASS
+          const totalRows = await Product.count({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { origin_id: orig.id },
+                    { destination_id: dest.id },
+                    { flight_date: { [Op.like]: "%" + date + "%" } },
+                    { type: { [Op.like]: "%" + kelas + "%" } },
+                  ],
                 },
-              },
-              {
-                flight_date: {
-                  [Op.like]: "%" + date + "%",
+                {
+                  [Op.and]: [
+                    { origin_id: dest.id },
+                    { destination_id: orig.id },
+                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                    { type: { [Op.like]: "%" + kelas + "%" } },
+                  ],
                 },
-              },
-            ],
-          },
-          offset: offset,
-          limit: limit,
-          order: [["id", "DESC"]],
-        });
-        res.json({
-          result: result,
-          page: page,
-          limit: limit,
-          totalRows: totalRows,
-          totalPage: totalPage,
-        });
+              ],
+            },
+          });
+          const totalPage = Math.ceil(totalRows / limit);
+          const result = await Product.findAll({
+            where: {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { origin_id: orig.id },
+                    { destination_id: dest.id },
+                    { flight_date: { [Op.like]: "%" + date + "%" } },
+                    { type: { [Op.like]: "%" + kelas + "%" } },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { origin_id: dest.id },
+                    { destination_id: orig.id },
+                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                    { type: { [Op.like]: "%" + kelas + "%" } },
+                  ],
+                },
+              ],
+            },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
+            offset: offset,
+            limit: limit,
+            order: [["id", "ASC"]],
+          });
+          res.json({
+            result: result,
+            page: page,
+            limit: limit,
+            totalRows: totalRows,
+            totalPage: totalPage,
+          });
+        }
+      } else {
+        //ONE-WAY , ALL CLASSES
+        if (!kelas.length) {
+          const totalRows = await Product.count({
+            where: {
+              [Op.and]: [
+                { origin_id: orig.id },
+                { destination_id: dest.id },
+                { flight_date: { [Op.like]: "%" + date + "%" } },
+              ],
+            },
+          });
+          const totalPage = Math.ceil(totalRows / limit);
+          const result = await Product.findAll({
+            where: {
+              [Op.and]: [
+                { origin_id: orig.id },
+                { destination_id: dest.id },
+                { flight_date: { [Op.like]: "%" + date + "%" } },
+              ],
+            },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
+            offset: offset,
+            limit: limit,
+            order: [["id", "ASC"]],
+          });
+          res.json({
+            result: result,
+            page: page,
+            limit: limit,
+            totalRows: totalRows,
+            totalPage: totalPage,
+          });
+        } else {
+          //ONE-WAY, SPECIFIC CLASS
+          const totalRows = await Product.count({
+            where: {
+              [Op.and]: [
+                { origin_id: orig.id },
+                { destination_id: dest.id },
+                { flight_date: { [Op.like]: "%" + date + "%" } },
+                { type: { [Op.like]: "%" + kelas + "%" } },
+              ],
+            },
+          });
+          const totalPage = Math.ceil(totalRows / limit);
+          const result = await Product.findAll({
+            where: {
+              [Op.and]: [
+                { origin_id: orig.id },
+                { destination_id: dest.id },
+                { flight_date: { [Op.like]: "%" + date + "%" } },
+                { type: { [Op.like]: "%" + kelas + "%" } },
+              ],
+            },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
+            offset: offset,
+            limit: limit,
+            order: [["id", "ASC"]],
+          });
+          res.json({
+            result: result,
+            page: page,
+            limit: limit,
+            totalRows: totalRows,
+            totalPage: totalPage,
+          });
+        }
       }
-      const totalRows = await Product.count({
-        where: {
-          [Op.and]: [
-            { origin_id: { [Op.like]: "%" + origin_id + "%" } },
-            { destination_id: { [Op.like]: "%" + destination_id + "%" } },
-            { flight_date: { [Op.like]: "%" + date + "%" } },
-            { type: { [Op.like]: "%" + kelas + "%" } },
-          ],
-        },
-      });
-      const totalPage = Math.ceil(totalRows / limit);
-      const result = await Product.findAll({
-        where: {
-          [Op.and]: [
-            {
-              origin_id: {
-                [Op.like]: "%" + origin_id + "%",
-              },
-            },
-            {
-              destination_id: {
-                [Op.like]: "%" + destination_id + "%",
-              },
-            },
-            {
-              flight_date: {
-                [Op.like]: "%" + date + "%",
-              },
-            },
-            {
-              type: {
-                [Op.like]: "%" + kelas + "%",
-              },
-            },
-          ],
-        },
-        offset: offset,
-        limit: limit,
-        order: [["id", "DESC"]],
-      });
-      res.json({
-        result: result,
-        page: page,
-        limit: limit,
-        totalRows: totalRows,
-        totalPage: totalPage,
-      });
     } catch (error) {
       next(error);
     }
