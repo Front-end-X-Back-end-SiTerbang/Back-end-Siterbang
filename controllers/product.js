@@ -1,11 +1,13 @@
-const { Product, Airport, Airplane } = require("../models");
+const { Product, Airport, Airplane, Airline } = require("../models");
 const { Op } = require("sequelize");
 const { FLIGHT_CLASS } = require("../utils/enum");
 
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll({
+        include: [{ model: Airline, as: "airline", attributes: ["name"] }],
+      });
 
       if (!products.length) {
         return res.status(200).json({
@@ -168,15 +170,15 @@ module.exports = {
               [Op.or]: [
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                    { origin_id:   orig.id   },
+                    { destination_id:  dest.id  },
                     { flight_date: { [Op.like]: "%" + date + "%" } },
                   ],
                 },
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + dest.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + orig.id + "%" } },
+                    { origin_id:   dest.id   },
+                    { destination_id:  orig.id  },
                     { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                   ],
                 },
@@ -190,20 +192,21 @@ module.exports = {
               [Op.or]: [
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                    { origin_id:   orig.id   },
+                    { destination_id:  dest.id  },
                     { flight_date: { [Op.like]: "%" + date + "%" } },
                   ],
                 },
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + dest.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + orig.id + "%" } },
+                    { origin_id:   dest.id   },
+                    { destination_id:  orig.id  },
                     { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                   ],
                 },
               ],
             },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
             offset: offset,
             limit: limit,
             order: [["id", "ASC"]],
@@ -217,22 +220,22 @@ module.exports = {
           });
         } else {
           //round trip , specific type
-          console.log('specific class executed')
+          console.log("specific class executed");
           const totalRows = await Product.count({
             where: {
               [Op.or]: [
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                    { origin_id:   orig.id   },
+                    { destination_id:  dest.id  },
                     { flight_date: { [Op.like]: "%" + date + "%" } },
                     { type: { [Op.like]: "%" + kelas + "%" } },
                   ],
                 },
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + dest.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + orig.id + "%" } },
+                    { origin_id:   dest.id   },
+                    { destination_id:  orig.id  },
                     { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                     { type: { [Op.like]: "%" + kelas + "%" } },
                   ],
@@ -246,22 +249,23 @@ module.exports = {
               [Op.or]: [
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                    { origin_id:   orig.id   },
+                    { destination_id:  dest.id  },
                     { flight_date: { [Op.like]: "%" + date + "%" } },
                     { type: { [Op.like]: "%" + kelas + "%" } },
                   ],
                 },
                 {
                   [Op.and]: [
-                    { origin_id: { [Op.like]: "%" + dest.id + "%" } },
-                    { destination_id: { [Op.like]: "%" + orig.id + "%" } },
+                    { origin_id:   dest.id   },
+                    { destination_id:  orig.id  },
                     { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                     { type: { [Op.like]: "%" + kelas + "%" } },
                   ],
                 },
               ],
             },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
             offset: offset,
             limit: limit,
             order: [["id", "ASC"]],
@@ -280,8 +284,8 @@ module.exports = {
           const totalRows = await Product.count({
             where: {
               [Op.and]: [
-                { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                { origin_id:   orig.id   },
+                { destination_id:  dest.id  },
                 { flight_date: { [Op.like]: "%" + date + "%" } },
               ],
             },
@@ -290,11 +294,12 @@ module.exports = {
           const result = await Product.findAll({
             where: {
               [Op.and]: [
-                { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                { origin_id:   orig.id   },
+                { destination_id:  dest.id  },
                 { flight_date: { [Op.like]: "%" + date + "%" } },
               ],
             },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
             offset: offset,
             limit: limit,
             order: [["id", "ASC"]],
@@ -311,8 +316,8 @@ module.exports = {
           const totalRows = await Product.count({
             where: {
               [Op.and]: [
-                { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                { origin_id:   orig.id   },
+                { destination_id:  dest.id  },
                 { flight_date: { [Op.like]: "%" + date + "%" } },
                 { type: { [Op.like]: "%" + kelas + "%" } },
               ],
@@ -322,12 +327,13 @@ module.exports = {
           const result = await Product.findAll({
             where: {
               [Op.and]: [
-                { origin_id: { [Op.like]: "%" + orig.id + "%" } },
-                { destination_id: { [Op.like]: "%" + dest.id + "%" } },
+                { origin_id:   orig.id   },
+                { destination_id:  dest.id  },
                 { flight_date: { [Op.like]: "%" + date + "%" } },
                 { type: { [Op.like]: "%" + kelas + "%" } },
               ],
             },
+            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
             offset: offset,
             limit: limit,
             order: [["id", "ASC"]],
