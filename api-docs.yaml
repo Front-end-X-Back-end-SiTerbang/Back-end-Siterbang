@@ -341,28 +341,28 @@ paths:
                     data:
                       name: Garuda Indonesia
                       phone: 09875367289
-          '400':
-            description: Bad Request
-          '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                  message:
-                    type: string
-              examples:
-                status-unauthorized:
-                  value:
-                    status: false
-                    message: You're not authorized
-          '404':
-            description: Not Found
-          '500':
-            description: Internal Server Error
+        '400':
+          description: Bad Request
+        '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+            examples:
+              status-unauthorized:
+                value:
+                  status: false
+                  message: You're not authorized
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
   /airlines:
     post:
       summary: Create Airlines
@@ -449,8 +449,8 @@ paths:
           description: Internal Server Error
   /airlines/{id}:
     get:
-      summary: Get Airlines
-      description: Get Airlines
+      summary: Get Airlines By Id
+      description: Get Airlines By Id
       tags:
         - Airlines
       parameters:

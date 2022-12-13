@@ -3,13 +3,12 @@ const express = require("express");
 const router = express.Router();
 const mid = require("../middlewares");
 
-const multer = require("multer");
-const upload = multer();
+const upload = require("../utils/media_handling/storage");
 
 router.put(
   "/profile/photo/:id",
   mid.restrict.mustLogin,
-  upload.single("photo"),
+  upload.image.single("photo"),
   c.user.updateAvatar
 );
 router.put("/profile/:id", mid.restrict.mustLogin, c.user.updateProfile);

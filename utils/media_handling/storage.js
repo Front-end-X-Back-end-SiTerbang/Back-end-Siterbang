@@ -1,21 +1,20 @@
 const multer = require("multer");
 const path = require("path");
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "./public/images");
-  },
+// const storage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     callback(null, "./public/images");
+//   },
 
-  // generate file unique name
-  filename: (req, file, callback) => {
-    const nameFile = Date.now() + path.extname(file.originalname);
-    callback(null, nameFile);
-  },
-});
+//   // generate file unique name
+//   filename: (req, file, callback) => {
+//     const nameFile = Date.now() + path.extname(file.originalname);
+//     callback(null, nameFile);
+//   },
+// });
 
 module.exports = {
   image: multer({
-    storage: storage,
 
     // add file filter
     fileFilter: (req, file, callback) => {
