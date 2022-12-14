@@ -1,4 +1,4 @@
-const { Airplane } = require("../models");
+const { Airplane, Airline } = require("../models");
 
 module.exports = {
   getAll: async (req, res, next) => {
