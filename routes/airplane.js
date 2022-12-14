@@ -3,6 +3,7 @@ const router = express.Router();
 const airplane = require("../controllers/airplane");
 const mid = require("../middlewares");
 
+router.get('/', mid.restrict.mustAdmin , airplane.search)
 router.get("/all", mid.restrict.mustAdmin, airplane.getAll);
 router.get("/:id", mid.restrict.mustAdmin, airplane.get);
 router.get(
