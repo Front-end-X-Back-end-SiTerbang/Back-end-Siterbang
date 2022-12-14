@@ -5,11 +5,7 @@ const { FLIGHT_CLASS } = require("../utils/enum");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const products = await Product.findAll({
-        include: [
-          { model: Airline, as: "airline", attributes: ["name"] },
-        ],
-      });
+      const products = await Product.findAll();
 
       if (!products.length) {
         return res.status(200).json({
@@ -163,54 +159,96 @@ module.exports = {
         where: { city: destination },
       });
 
+      //SEARCH FILTER
+      const search_filter = {
+        RTAC: {  // ROUND-TRIP, ALL CLASSES
+          where: {
+            [Op.or]: [{
+                [Op.and]: [
+                  { origin_id: orig.id },
+                  { destination_id: dest.id },
+                  { flight_date: { [Op.like]: "%" + date + "%" } },],
+              },
+              {
+                [Op.and]: [
+                  { origin_id: dest.id },
+                  { destination_id: orig.id },
+                  { flight_date: { [Op.like]: "%" + returnDate + "%" } },],
+              },],
+          },
+          include: [
+            { model: Airline, as: "airline", attributes: ["name"] },
+            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        },
+        RTSC: { // ROUND-TRIP, SPECIFIC CLASS
+          where: {
+            [Op.or]: [{
+                [Op.and]: [
+                  { origin_id: orig.id },
+                  { destination_id: dest.id },
+                  { flight_date: { [Op.like]: "%" + date + "%" } },
+                  { type: { [Op.like]: "%" + kelas + "%" } },],
+              },
+              {
+                [Op.and]: [
+                  { origin_id: dest.id },
+                  { destination_id: orig.id },
+                  { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                  { type: { [Op.like]: "%" + kelas + "%" } },],
+              },],
+          },
+          include: [
+            { model: Airline, as: "airline", attributes: ["name"] },
+            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        },
+        OWAC : { //ONE-WAY , ALL CLASSES
+          where: {
+            [Op.and]: [
+              { origin_id: orig.id },
+              { destination_id: dest.id },
+              { flight_date: { [Op.like]: "%" + date + "%" } },],
+          },
+          include: [
+            { model: Airline, as: "airline", attributes: ["name"] },
+            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        },
+        OWSC : { //ONE-WAY, SPECIFIC CLASS
+          where: {
+            [Op.and]: [
+              { origin_id: orig.id },
+              { destination_id: dest.id },
+              { flight_date: { [Op.like]: "%" + date + "%" } },
+              { type: { [Op.like]: "%" + kelas + "%" } },
+            ],
+          },
+          include: [
+            { model: Airline, as: "airline", attributes: ["name"] },
+            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        }
+      };
+
       if (roundTrip) {
         if (!kelas) {
           // ROUND-TRIP, ALL CLASSES
-          const totalRows = await Product.count({
-            where: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { origin_id: orig.id },
-                    { destination_id: dest.id },
-                    { flight_date: { [Op.like]: "%" + date + "%" } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { origin_id: dest.id },
-                    { destination_id: orig.id },
-                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
-                  ],
-                },
-              ],
-            },
-          });
+          const totalRows = await Product.count(search_filter.RTAC);
           const totalPage = Math.ceil(totalRows / limit);
-          const result = await Product.findAll({
-            where: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { origin_id: orig.id },
-                    { destination_id: dest.id },
-                    { flight_date: { [Op.like]: "%" + date + "%" } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { origin_id: dest.id },
-                    { destination_id: orig.id },
-                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
-                  ],
-                },
-              ],
-            },
-            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
-            offset: offset,
-            limit: limit,
-            order: [["id", "ASC"]],
-          });
+          const result = await Product.findAll(search_filter.RTAC);
           res.json({
             result: result,
             page: page,
@@ -220,55 +258,9 @@ module.exports = {
           });
         } else {
           // ROUND-TRIP, SPECIFIC CLASS
-          const totalRows = await Product.count({
-            where: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { origin_id: orig.id },
-                    { destination_id: dest.id },
-                    { flight_date: { [Op.like]: "%" + date + "%" } },
-                    { type: { [Op.like]: "%" + kelas + "%" } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { origin_id: dest.id },
-                    { destination_id: orig.id },
-                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
-                    { type: { [Op.like]: "%" + kelas + "%" } },
-                  ],
-                },
-              ],
-            },
-          });
+          const totalRows = await Product.count(search_filter.RTSC);
           const totalPage = Math.ceil(totalRows / limit);
-          const result = await Product.findAll({
-            where: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { origin_id: orig.id },
-                    { destination_id: dest.id },
-                    { flight_date: { [Op.like]: "%" + date + "%" } },
-                    { type: { [Op.like]: "%" + kelas + "%" } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { origin_id: dest.id },
-                    { destination_id: orig.id },
-                    { flight_date: { [Op.like]: "%" + returnDate + "%" } },
-                    { type: { [Op.like]: "%" + kelas + "%" } },
-                  ],
-                },
-              ],
-            },
-            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
-            offset: offset,
-            limit: limit,
-            order: [["id", "ASC"]],
-          });
+          const result = await Product.findAll(search_filter.RTSC);
           res.json({
             result: result,
             page: page,
@@ -280,29 +272,9 @@ module.exports = {
       } else {
         //ONE-WAY , ALL CLASSES
         if (!kelas.length) {
-          const totalRows = await Product.count({
-            where: {
-              [Op.and]: [
-                { origin_id: orig.id },
-                { destination_id: dest.id },
-                { flight_date: { [Op.like]: "%" + date + "%" } },
-              ],
-            },
-          });
+          const totalRows = await Product.count(search_filter.OWAC);
           const totalPage = Math.ceil(totalRows / limit);
-          const result = await Product.findAll({
-            where: {
-              [Op.and]: [
-                { origin_id: orig.id },
-                { destination_id: dest.id },
-                { flight_date: { [Op.like]: "%" + date + "%" } },
-              ],
-            },
-            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
-            offset: offset,
-            limit: limit,
-            order: [["id", "ASC"]],
-          });
+          const result = await Product.findAll(search_filter.OWAC);
           res.json({
             result: result,
             page: page,
@@ -312,31 +284,9 @@ module.exports = {
           });
         } else {
           //ONE-WAY, SPECIFIC CLASS
-          const totalRows = await Product.count({
-            where: {
-              [Op.and]: [
-                { origin_id: orig.id },
-                { destination_id: dest.id },
-                { flight_date: { [Op.like]: "%" + date + "%" } },
-                { type: { [Op.like]: "%" + kelas + "%" } },
-              ],
-            },
-          });
+          const totalRows = await Product.count(search_filter.OWSC);
           const totalPage = Math.ceil(totalRows / limit);
-          const result = await Product.findAll({
-            where: {
-              [Op.and]: [
-                { origin_id: orig.id },
-                { destination_id: dest.id },
-                { flight_date: { [Op.like]: "%" + date + "%" } },
-                { type: { [Op.like]: "%" + kelas + "%" } },
-              ],
-            },
-            include: [{ model: Airline, as: "airline", attributes: ["name"] }],
-            offset: offset,
-            limit: limit,
-            order: [["id", "ASC"]],
-          });
+          const result = await Product.findAll(search_filter.OWSC);
           res.json({
             result: result,
             page: page,
