@@ -54,8 +54,6 @@ module.exports = {
         depature_hours,
         airplane_id,
         estimation,
-        gate,
-        terminal,
       } = req.body;
 
       let { price, type } = req.body;
@@ -82,6 +80,22 @@ module.exports = {
           },
         });
       }
+      
+      const airport = await Airport.findOne({where : {id : destination_id} , attributes : ['country']})
+
+      let terminal = "DOMESTIC "
+      const alphabet = "AB";
+      const number = "123"
+
+      if(airport.country == 'INDONESIA'){
+        terminal += alphabet[Math.floor(Math.random() * alphabet.length)]
+        terminal += number[Math.floor(Math.random() * number.length)]
+      }else {
+        terminal = 'INTERNATIONAL '
+        terminal += alphabet[Math.floor(Math.random() * alphabet.length)]
+        terminal += number[Math.floor(Math.random() * number.length)]
+      }
+
       const classes = type;
       if (type == FLIGHT_CLASS.ECONOMY) {
       } else if (type == FLIGHT_CLASS.BUSINESS) {
@@ -95,7 +109,7 @@ module.exports = {
           data: null,
         });
       }
-      function makeid(length) {
+      function makeTicketCode(length) {
         let result = "";
         let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let charactersLength = characters.length;
@@ -106,6 +120,21 @@ module.exports = {
         }
         return result;
       }
+
+      function makeGate() {
+        let result = "";
+        let alphabet = "ABCDEF";
+        let number = "123456789"
+        result += alphabet[Math.floor(Math.random() * alphabet.length)]
+        result += number[Math.floor(Math.random() * number.length)]
+        return result;
+      }
+
+      
+
+
+
+      
 
       const newProduct = await Product.create({
         origin_id,
@@ -118,8 +147,8 @@ module.exports = {
         airplane_id,
         airline_id: airplane.airline_id,
         estimation,
-        code: makeid(5),
-        gate,
+        code: makeTicketCode(5),
+        gate: makeGate(),
         terminal,
         type: classes,
       });
