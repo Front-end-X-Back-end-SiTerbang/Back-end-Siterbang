@@ -28,23 +28,16 @@ module.exports = {
 
       const product = await Product.findOne({
         where: { id },
-      });
-
-      const origin = await Airport.findOne({
-        where: { id: product.origin_id },
-      });
-      const destination = await Airport.findOne({
-        where: { id: product.destination_id },
+        include: [
+          { model: Airline, as: "airline", attributes: ["name"] },
+          { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+          { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
       });
 
       return res.status(200).json({
         status: true,
         message: "success get product details",
-        data: {
-          origin: origin.city,
-          destination: destination.city,
-          details: product,
-        },
+        data: product
       });
     } catch (error) {
       next(error);
@@ -158,8 +151,26 @@ module.exports = {
       const dest = await Airport.findOne({
         where: { city: destination },
       });
+      
+      if(!orig){
+        return res.status(400).json({
+          status: false, message : "Origin not found", data: orig
+        })
+      }
+      if(!dest){
+        return res.status(400).json({
+          status: false, message : "destination not found", data: dest
+        })
+      }
 
       //SEARCH FILTER
+
+      const  include=  [
+        { model: Airline, as: "airline", attributes: ["name"] },
+        { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
+        { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }
+      ]
+
       const search_filter = {
         RTAC: {  // ROUND-TRIP, ALL CLASSES
           where: {
@@ -176,10 +187,7 @@ module.exports = {
                   { flight_date: { [Op.like]: "%" + returnDate + "%" } },],
               },],
           },
-          include: [
-            { model: Airline, as: "airline", attributes: ["name"] },
-            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
-            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          include,
           offset: offset,
           limit: limit,
           order: [["id", "ASC"]],
@@ -201,10 +209,7 @@ module.exports = {
                   { type: { [Op.like]: "%" + kelas + "%" } },],
               },],
           },
-          include: [
-            { model: Airline, as: "airline", attributes: ["name"] },
-            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
-            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          include,
           offset: offset,
           limit: limit,
           order: [["id", "ASC"]],
@@ -216,10 +221,7 @@ module.exports = {
               { destination_id: dest.id },
               { flight_date: { [Op.like]: "%" + date + "%" } },],
           },
-          include: [
-            { model: Airline, as: "airline", attributes: ["name"] },
-            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
-            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          include,
           offset: offset,
           limit: limit,
           order: [["id", "ASC"]],
@@ -233,16 +235,14 @@ module.exports = {
               { type: { [Op.like]: "%" + kelas + "%" } },
             ],
           },
-          include: [
-            { model: Airline, as: "airline", attributes: ["name"] },
-            { model: Airport, as: "origin", attributes: ['iata_code',"city", "name"] },
-            { model: Airport, as: "destination", attributes: ['iata_code',"city", "name"] }],
+          include,
           offset: offset,
           limit: limit,
           order: [["id", "ASC"]],
         }
       };
 
+      
       if (roundTrip) {
         if (!kelas) {
           // ROUND-TRIP, ALL CLASSES

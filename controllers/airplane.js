@@ -35,6 +35,15 @@ module.exports = {
         });
       }
 
+      const airlineExist = await Airline.findOne({ where: { id: airline_id } });
+      if (!airlineExist) {
+        return res.status(400).json({
+          status: false,
+          message: "airline not found",
+          data: airlineExist,
+        });
+      }
+
       const newAirplane = await Airplane.create({
         name,
         airline_id,
