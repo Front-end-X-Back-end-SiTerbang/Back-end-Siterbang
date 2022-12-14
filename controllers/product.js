@@ -102,32 +102,6 @@ module.exports = {
         });
       }
 
-      let terminal = "DOMESTIC ";
-      const alphabet = "AB";
-      const number = "123";
-
-      if (airport.country == "INDONESIA") {
-        terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
-        terminal += number[Math.floor(Math.random() * number.length)];
-      } else {
-        terminal = "INTERNATIONAL ";
-        terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
-        terminal += number[Math.floor(Math.random() * number.length)];
-      }
-
-      const classes = type;
-      if (type == FLIGHT_CLASS.ECONOMY) {
-      } else if (type == FLIGHT_CLASS.BUSINESS) {
-        price = price + (price * 15) / 100;
-      } else if (type == FLIGHT_CLASS.FIRST) {
-        price = price + (price * 45) / 100;
-      } else {
-        return res.status(422).json({
-          status: false,
-          message: "Flight Classes not Found",
-          data: null,
-        });
-      }
       function makeTicketCode(length) {
         let result = "";
         let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -147,6 +121,90 @@ module.exports = {
         result += alphabet[Math.floor(Math.random() * alphabet.length)];
         result += number[Math.floor(Math.random() * number.length)];
         return result;
+      }
+      let terminal = "DOMESTIC ";
+      const alphabet = "AB";
+      const number = "123";
+
+      if (airport.country == "INDONESIA") {
+        terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
+        terminal += number[Math.floor(Math.random() * number.length)];
+      } else {
+        terminal = "INTERNATIONAL ";
+        terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
+        terminal += number[Math.floor(Math.random() * number.length)];
+      }
+
+      const classes = type;
+      if (type == FLIGHT_CLASS.ECONOMY) {
+      } else if (type == FLIGHT_CLASS.BUSINESS) {
+        price = price + (price * 15) / 100;
+      } else if (type == FLIGHT_CLASS.FIRST) {
+        price = price + (price * 45) / 100;
+      } else if (type == FLIGHT_CLASS.ALL) {
+        const capacity = airplane.capacity;
+        const gate = makeGate();
+        const terminaL = terminal;
+        const economy = await Product.create({
+          origin_id,
+          destination_id,
+          price: price,
+          stock: capacity / 2,
+          transit_total,
+          flight_date,
+          depature_hours,
+          airplane_id,
+          airline_id: airplane.airline_id,
+          estimation,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.ECONOMY,
+        });
+        const business = await Product.create({
+          origin_id,
+          destination_id,
+          price: price,
+          stock: capacity / 4,
+          transit_total,
+          flight_date,
+          depature_hours,
+          airplane_id,
+          airline_id: airplane.airline_id,
+          estimation,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.BUSINESS,
+        });
+        const first = await Product.create({
+          origin_id,
+          destination_id,
+          price: price,
+          stock: capacity / 4,
+          transit_total,
+          flight_date,
+          depature_hours,
+          airplane_id,
+          airline_id: airplane.airline_id,
+          estimation,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.FIRST,
+        });
+
+        return res.status(201).json({
+          status: true,
+          message: "3 Products added successfully",
+          data: { economy, business, first },
+        });
+      } else {
+        return res.status(422).json({
+          status: false,
+          message: "Flight Classes not Found",
+          data: null,
+        });
       }
 
       const newProduct = await Product.create({
@@ -223,7 +281,7 @@ module.exports = {
           attributes: ["iata_code", "city", "name"],
         },
       ];
-      
+
       //SEARCH FILTER
       const search_filter = {
         RTAC: {
