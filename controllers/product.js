@@ -309,8 +309,59 @@ module.exports = {
           limit: limit,
           order: [["id", "ASC"]],
         },
+        RTACNR: {
+          // ROUND-TRIP, ALL , NO RETURN DATE
+          where: {
+            [Op.or]: [
+              {
+                [Op.and]: [
+                  { origin_id: orig.id },
+                  { destination_id: dest.id },
+                  { flight_date: { [Op.like]: "%" + date + "%" } },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { origin_id: dest.id },
+                  { destination_id: orig.id },
+                ],
+              },
+            ],
+          },
+          include,
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        },
         RTSC: {
           // ROUND-TRIP, SPECIFIC CLASS
+          where: {
+            [Op.or]: [
+              {
+                [Op.and]: [
+                  { origin_id: orig.id },
+                  { destination_id: dest.id },
+                  { flight_date: { [Op.like]: "%" + date + "%" } },
+                  { type: { [Op.like]: "%" + kelas + "%" } },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { origin_id: dest.id },
+                  { destination_id: orig.id },
+                  { flight_date: { [Op.like]: "%" + returnDate + "%" } },
+                  { type: { [Op.like]: "%" + kelas + "%" } },
+                ],
+              },
+            ],
+          },
+          include,
+          offset: offset,
+          limit: limit,
+          order: [["id", "ASC"]],
+        },
+        RTSCNR: {
+          // ROUND-TRIP, SPECIFIC CLASS, NO RETURN DATE
           where: {
             [Op.or]: [
               {
@@ -367,20 +418,48 @@ module.exports = {
         },
       };
 
+
+      //SEARCH
       if (roundTrip) {
         if (!kelas) {
-          // ROUND-TRIP, ALL CLASSES
-          const totalRows = await Product.count(search_filter.RTAC);
-          const totalPage = Math.ceil(totalRows / limit);
-          const result = await Product.findAll(search_filter.RTAC);
-          res.json({
-            result: result,
-            page: page,
-            limit: limit,
-            totalRows: totalRows,
-            totalPage: totalPage,
+          if(!returnDate){
+            // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
+            const totalRows = await Product.count(search_filter.RTACNR);
+            const totalPage = Math.ceil(totalRows / limit);
+            const result = await Product.findAll(search_filter.RTACNR);
+            res.json({
+              result: result,
+              page: page,
+              limit: limit,
+              totalRows: totalRows,
+              totalPage: totalPage,
           });
-        } else {
+          }else{
+            if(!returnDate){
+              // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
+            const totalRows = await Product.count(search_filter.RTACNR);
+            const totalPage = Math.ceil(totalRows / limit);
+            const result = await Product.findAll(search_filter.RTACNR);
+            res.json({
+              result: result,
+              page: page,
+              limit: limit,
+              totalRows: totalRows,
+              totalPage: totalPage,
+            });
+            }else{
+          // ROUND-TRIP, ALL CLASSES
+            const totalRows = await Product.count(search_filter.RTAC);
+            const totalPage = Math.ceil(totalRows / limit);
+            const result = await Product.findAll(search_filter.RTAC);
+            res.json({
+              result: result,
+              page: page,
+              limit: limit,
+              totalRows: totalRows,
+              totalPage: totalPage,
+            });}
+        }} else {
           // ROUND-TRIP, SPECIFIC CLASS
           const totalRows = await Product.count(search_filter.RTSC);
           const totalPage = Math.ceil(totalRows / limit);
