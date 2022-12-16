@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Airport.hasMany(models.Product, {
         foreignKey: "destination_id",
-        as: "products",
+        as: "arrival_products",
+      });
+      Airport.hasMany(models.Product, {
+        foreignKey: "origin_id",
+        as: "depature_products",
       });
     }
   }

@@ -1,4 +1,5 @@
-const { Airplane } = require("../models");
+const { Airplane, Airline } = require("../models");
+const { Op } = require("sequelize");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -32,6 +33,15 @@ module.exports = {
           status: false,
           message: "Airplane already exist!",
           data: null,
+        });
+      }
+
+      const airlineExist = await Airline.findOne({ where: { id: airline_id } });
+      if (!airlineExist) {
+        return res.status(400).json({
+          status: false,
+          message: "airline not found",
+          data: airlineExist,
         });
       }
 
@@ -91,6 +101,76 @@ module.exports = {
         message: "success get all airplane",
         data: airplane,
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+  search: async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search || "";
+      const offset = limit * page;
+
+      const airlines = await Airline.findOne({
+        where: { name: { [Op.like]: "%" + search + "%" } },
+        attributes: ["id"]
+      });
+      if(airlines== null){
+        const totalRows = await Airplane.count({
+          where: { [Op.or]: [
+              { name: { [Op.like]: "%" + search + "%" } },
+              { type: { [Op.like]: "%" + search + "%" } },
+            ],
+          },
+        });
+        const totalPage = Math.ceil(totalRows / limit);
+        const result = await Airplane.findAll({
+          where: { [Op.or]: [
+              { name: { [Op.like]: "%" + search + "%" } },
+              { type: { [Op.like]: "%" + search + "%" } },
+          ]},
+          offset: offset,
+          limit: limit,
+          order: [["name", "DESC"]],
+        });
+        res.json({
+          result: result,
+          page: page,
+          limit: limit,
+          totalRows: totalRows,
+          totalPage: totalPage,
+        });
+      }else {
+        const totalRows = await Airplane.count({
+          where: { [Op.or]: [
+              { name: { [Op.like]: "%" + search + "%" } },
+              { type: { [Op.like]: "%" + search + "%" } },
+              { airline_id: airlines.id },
+            ],
+          },
+        });
+        const totalPage = Math.ceil(totalRows / limit);
+        const result = await Airplane.findAll({
+          where: { [Op.or]: [
+              { name: { [Op.like]: "%" + search + "%" } },
+              { type: { [Op.like]: "%" + search + "%" } },
+              { airline_id: airlines.id  },
+          ]},
+          offset: offset,
+          limit: limit,
+          order: [["name", "DESC"]],
+        });
+        res.json({
+          result: result,
+          page: page,
+          limit: limit,
+          totalRows: totalRows,
+          totalPage: totalPage,
+        });
+      }
+
+      
     } catch (error) {
       next(error);
     }
