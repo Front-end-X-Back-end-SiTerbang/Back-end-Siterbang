@@ -237,33 +237,26 @@ module.exports = {
     try {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      const origin = req.query.origin || "";
-      const destination = req.query.destination || "";
+      const origin_id = req.query.origin_id || "";
+      const destination_id = req.query.destination_id || "";
       const date = req.query.flight_date || "";
       const kelas = req.query.class || "";
       const offset = limit * page;
       const roundTrip = req.query.roundTrip;
       const returnDate = req.query.returnDate;
 
-      const orig = await Airport.findOne({
-        where: { city: origin },
-      });
-      const dest = await Airport.findOne({
-        where: { city: destination },
-      });
-
-      if (!orig) {
+      if (!origin_id) {
         return res.status(400).json({
           status: false,
           message: "Origin not found",
-          data: orig,
+          data: origin_id,
         });
       }
-      if (!dest) {
+      if (!destination_id) {
         return res.status(400).json({
           status: false,
           message: "destination not found",
-          data: dest,
+          data: destination_id,
         });
       }
 
@@ -290,15 +283,15 @@ module.exports = {
             [Op.or]: [
               {
                 [Op.and]: [
-                  { origin_id: orig.id },
-                  { destination_id: dest.id },
+                  { origin_id: origin_id },
+                  { destination_id: destination_id },
                   { flight_date: { [Op.like]: "%" + date + "%" } },
                 ],
               },
               {
                 [Op.and]: [
-                  { origin_id: dest.id },
-                  { destination_id: orig.id },
+                  { origin_id: destination_id },
+                  { destination_id: origin_id },
                   { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                 ],
               },
@@ -315,15 +308,15 @@ module.exports = {
             [Op.or]: [
               {
                 [Op.and]: [
-                  { origin_id: orig.id },
-                  { destination_id: dest.id },
+                  { origin_id: origin_id },
+                  { destination_id: destination_id },
                   { flight_date: { [Op.like]: "%" + date + "%" } },
                 ],
               },
               {
                 [Op.and]: [
-                  { origin_id: dest.id },
-                  { destination_id: orig.id },
+                  { origin_id: destination_id },
+                  { destination_id: origin_id },
                 ],
               },
             ],
@@ -339,16 +332,16 @@ module.exports = {
             [Op.or]: [
               {
                 [Op.and]: [
-                  { origin_id: orig.id },
-                  { destination_id: dest.id },
+                  { origin_id: origin_id },
+                  { destination_id: destination_id },
                   { flight_date: { [Op.like]: "%" + date + "%" } },
                   { type: { [Op.like]: "%" + kelas + "%" } },
                 ],
               },
               {
                 [Op.and]: [
-                  { origin_id: dest.id },
-                  { destination_id: orig.id },
+                  { origin_id: destination_id },
+                  { destination_id: origin_id },
                   { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                   { type: { [Op.like]: "%" + kelas + "%" } },
                 ],
@@ -366,16 +359,16 @@ module.exports = {
             [Op.or]: [
               {
                 [Op.and]: [
-                  { origin_id: orig.id },
-                  { destination_id: dest.id },
+                  { origin_id: origin_id },
+                  { destination_id: destination_id },
                   { flight_date: { [Op.like]: "%" + date + "%" } },
                   { type: { [Op.like]: "%" + kelas + "%" } },
                 ],
               },
               {
                 [Op.and]: [
-                  { origin_id: dest.id },
-                  { destination_id: orig.id },
+                  { origin_id: destination_id },
+                  { destination_id: origin_id },
                   { flight_date: { [Op.like]: "%" + returnDate + "%" } },
                   { type: { [Op.like]: "%" + kelas + "%" } },
                 ],
@@ -391,8 +384,8 @@ module.exports = {
           //ONE-WAY , ALL CLASSES
           where: {
             [Op.and]: [
-              { origin_id: orig.id },
-              { destination_id: dest.id },
+              { origin_id: origin_id },
+              { destination_id: destination_id },
               { flight_date: { [Op.like]: "%" + date + "%" } },
             ],
           },
@@ -405,8 +398,8 @@ module.exports = {
           //ONE-WAY, SPECIFIC CLASS
           where: {
             [Op.and]: [
-              { origin_id: orig.id },
-              { destination_id: dest.id },
+              { origin_id: origin_id },
+              { destination_id: destination_id },
               { flight_date: { [Op.like]: "%" + date + "%" } },
               { type: { [Op.like]: "%" + kelas + "%" } },
             ],
