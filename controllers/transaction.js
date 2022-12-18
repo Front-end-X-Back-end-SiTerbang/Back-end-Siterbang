@@ -61,14 +61,6 @@ module.exports = {
         include: ["product"],
       });
 
-
-      const createBookingDetail = await Booking_detail.create({
-        nik,
-        passenger_name,
-        passenger_phone,
-        transaction_id : createTransaction.id,
-        seat_number : ""
-      });
       const max = 200;
       const seatNum = Math.floor(Math.random() * max + 1);
       const seatCode = ["E", "B", "F"];
@@ -86,6 +78,14 @@ module.exports = {
           message: "Incorrect Flight Class",
         });
       }
+      const createBookingDetail = await Booking_detail.create({
+        nik,
+        passenger_name,
+        passenger_phone,
+        transaction_id : createTransaction.id,
+        seat_number : seat
+      });
+      
       return res.status(201).json({
         status: true,
         message: "success create transaction",
