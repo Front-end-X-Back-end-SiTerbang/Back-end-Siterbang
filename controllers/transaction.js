@@ -1,6 +1,7 @@
 const { Transaction, Product, Payment, Booking_detail } = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
+const {FLIGHT_CLASS} = require('../utils/enum')
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -25,7 +26,13 @@ module.exports = {
   },
   createTransaction: async (req, res, next) => {
     try {
-      const { product_id, total_passenger } = req.body;
+      const {
+        product_id,
+        total_passenger,
+        nik,
+        passenger_name,
+        passenger_phone,
+      } = req.body;
 
       const token = req.headers["authorization"];
       const user = jwt.verify(token, JWT_SECRET);
@@ -38,22 +45,51 @@ module.exports = {
           data: product,
         });
       }
-
+      
       const price = product.price;
       const total = price * total_passenger;
-      const newTransaction = await Transaction.create({
+      const createTransaction = await Transaction.create({
         product_id,
-        is_paid: false,
+        is_paid: true,
         is_cancelled: false,
         user_id: user.id,
         total_order: total,
         total_passenger,
       });
+      const transactionExist = await Transaction.findOne({
+        where: { id: createTransaction.id },
+        include: ["product"],
+      });
 
+
+      const createBookingDetail = await Booking_detail.create({
+        nik,
+        passenger_name,
+        passenger_phone,
+        transaction_id : createTransaction.id,
+        seat_number : ""
+      });
+      const max = 200;
+      const seatNum = Math.floor(Math.random() * max + 1);
+      const seatCode = ["E", "B", "F"];
+      const productType = product.type
+      let seat = "seat";
+      if (productType == FLIGHT_CLASS.ECONOMY) {
+        seat = seatCode[0] + String(seatNum);
+      } else if (productType == FLIGHT_CLASS.BUSINESS) {
+        seat = seatCode[1] + String(seatNum);
+      } else if (productType == FLIGHT_CLASS.FIRST) {
+        seat = seatCode[2] + String(seatNum);
+      } else {
+        return res.status(400).json({
+          status: false,
+          message: "Incorrect Flight Class",
+        });
+      }
       return res.status(201).json({
         status: true,
         message: "success create transaction",
-        data: newTransaction,
+        data: { transaction: createTransaction, detail: createBookingDetail },
       });
     } catch (error) {
       next(error);
