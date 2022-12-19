@@ -1,7 +1,13 @@
-const { Transaction, Product, Payment, Booking_detail } = require("../models");
+const {
+  Transaction,
+  Product,
+  Payment,
+  Booking_detail,
+  Airport,
+} = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
-const {FLIGHT_CLASS} = require('../utils/enum')
+const { FLIGHT_CLASS } = require("../utils/enum");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -45,7 +51,7 @@ module.exports = {
           data: product,
         });
       }
-      
+
       const price = product.price;
       const total = price * total_passenger;
       const createTransaction = await Transaction.create({
@@ -64,7 +70,7 @@ module.exports = {
       const max = 200;
       const seatNum = Math.floor(Math.random() * max + 1);
       const seatCode = ["E", "B", "F"];
-      const productType = product.type
+      const productType = product.type;
       let seat = "seat";
       if (productType == FLIGHT_CLASS.ECONOMY) {
         seat = seatCode[0] + String(seatNum);
@@ -82,10 +88,10 @@ module.exports = {
         nik,
         passenger_name,
         passenger_phone,
-        transaction_id : createTransaction.id,
-        seat_number : seat
+        transaction_id: createTransaction.id,
+        seat_number: seat,
       });
-      
+
       return res.status(201).json({
         status: true,
         message: "success create transaction",
@@ -101,7 +107,11 @@ module.exports = {
       const user = jwt.verify(token, JWT_SECRET);
       const userTransactions = await Transaction.findAll({
         where: { user_id: user.id, is_cancelled: false },
-        include: ["product", "booking_details"],
+        include: [
+          {model: Product,as: "product",include: [
+              {model: Airport,as: "origin", attributes: ["iata_code","city"],},
+              {model: Airport, as: "destination", attributes: ["iata_code","city"],},
+            ],}, "booking_details",],
       });
       if (!userTransactions.length) {
         return res.status(200).json({
