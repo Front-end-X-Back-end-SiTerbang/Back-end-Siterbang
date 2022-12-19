@@ -5,7 +5,7 @@ const mid = require("../middlewares");
 
 const multer = require("multer");
 const upload = multer();
-
+router.get('/', mid.restrict.mustLogin , c.user.getUserInfo)
 router.put(
   "/profile/photo",
   mid.restrict.mustLogin,
