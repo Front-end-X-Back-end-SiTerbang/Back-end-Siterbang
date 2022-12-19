@@ -89,7 +89,7 @@ module.exports = {
     const token = req.headers["authorization"];
     const user = jwt.verify(token, JWT_SECRET);
     
-    const userData = await User.findOne({where : {id : user.id} , attributes : ['name', 'email', 'phone' , 'gender', 'postal_code']})
+    const userData = await User.findOne({where : {id : user.id} , attributes : ['name', 'email', 'phone' , 'gender', 'postal_code', 'address']})
     return res.status(200).json({
       status : true,
       message : "success get user information",
