@@ -33,7 +33,7 @@ module.exports = {
   },
   createTransaction: async (req, res, next) => {
     try {
-      const { product_id, total_passenger , passengers} = req.body;
+      const { product_id, total_passenger, passengers } = req.body;
       const token = req.headers["authorization"];
       const user = jwt.verify(token, JWT_SECRET);
 
@@ -61,45 +61,44 @@ module.exports = {
         include: ["product"],
       });
 
-      const max = 200;
-      const seatNum = Math.floor(Math.random() * max + 1);
-      const seatCode = ["E", "B", "F"];
-      const productType = product.type;
-      let seat = "seat";
-      if (productType == FLIGHT_CLASS.ECONOMY) {
-        seat = seatCode[0] + String(seatNum);
-      } else if (productType == FLIGHT_CLASS.BUSINESS) {
-        seat = seatCode[1] + String(seatNum);
-      } else if (productType == FLIGHT_CLASS.FIRST) {
-        seat = seatCode[2] + String(seatNum);
-      } else {
-        return res.status(400).json({
-          status: false,
-          message: "Incorrect Flight Class",
-        });
-      }
-
       passengers.forEach(async (element) => {
-        const createPassengers =  await Booking_detail.create({
-          nik : element.nik,
-          passenger_name : element.passenger_name,
-          passenger_phone : element.passenger_phone,
+        const max = 200;
+        const seatNum = Math.floor(Math.random() * max + 1);
+        const seatCode = ["E", "B", "F"];
+        const productType = product.type;
+        let seat = "seat";
+        if (productType == FLIGHT_CLASS.ECONOMY) {
+          seat = seatCode[0] + String(seatNum);
+        } else if (productType == FLIGHT_CLASS.BUSINESS) {
+          seat = seatCode[1] + String(seatNum);
+        } else if (productType == FLIGHT_CLASS.FIRST) {
+          seat = seatCode[2] + String(seatNum);
+        } else {
+          return res.status(400).json({
+            status: false,
+            message: "Incorrect Flight Class",
+          });
+        }
+        const createPassengers = await Booking_detail.create({
+          nik: element.nik,
+          passenger_name: element.passenger_name,
+          passenger_phone: element.passenger_phone,
           transaction_id: createTransaction.id,
-          seat_number: seat
+          seat_number: seat,
         });
       });
 
       const newTransaction = await Transaction.findOne({
-        where: { id: createTransaction.id } 
+        where: { id: createTransaction.id },
       });
-      const passengers_detail = await Booking_detail.findAll({where : {transaction_id: createTransaction.id}})
+      const passengers_detail = await Booking_detail.findAll({
+        where: { transaction_id: createTransaction.id },
+      });
       return res.status(201).json({
         status: true,
         message: "success create transaction",
-        data: {transaction : newTransaction,
-        passengers_detail},
+        data: { transaction: newTransaction, passengers_detail },
       });
-
     } catch (error) {
       next(error);
     }
@@ -130,7 +129,7 @@ module.exports = {
           },
           "booking_details",
         ],
-        order : [['id', 'DESC']]
+        order: [["id", "DESC"]],
       });
       if (!userTransactions.length) {
         return res.status(200).json({
