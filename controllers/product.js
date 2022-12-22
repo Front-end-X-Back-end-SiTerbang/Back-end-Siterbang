@@ -5,6 +5,77 @@ const { FLIGHT_CLASS } = require("../utils/enum");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
+
+      const airportIDorigin = Math.floor(Math.random() * 508) + 1;
+      const airportIDdestionation = Math.floor(Math.random() * 508) + 1;
+      if(airportIDorigin == airportIDdestionation){
+        return res.status(400).json({
+          status  : false , message : "origin and destination must diffrent"
+        })
+      }
+      const capacity = airplane.capacity;
+      const gate = makeGate();
+      const terminaL = terminal;
+      const economy = await Product.create({
+        origin_id,
+        destination_id,
+        price: price,
+        stock: capacity / 2,
+        transit_total,
+        flight_date,
+        depature_hours,
+        airplane_id,
+        airline_id: airplane.airline_id,
+        estimation,
+        code: makeTicketCode(5),
+        gate: gate,
+        terminal: terminaL,
+        type: FLIGHT_CLASS.ECONOMY,
+      });
+      priceE = price + (price * 15) / 100;
+      const business = await Product.create({
+        
+        origin_id,
+        destination_id,
+        price: priceE,
+        stock: capacity / 4,
+        transit_total,
+        flight_date,
+        depature_hours,
+        airplane_id,
+        airline_id: airplane.airline_id,
+        estimation,
+        code: makeTicketCode(5),
+        gate: gate,
+        terminal: terminaL,
+        type: FLIGHT_CLASS.BUSINESS,
+      });
+      priceF = price + (price * 45) / 100;
+      const first = await Product.create({
+        origin_id,
+        destination_id,
+        price: priceF,
+        stock: capacity / 4,
+        transit_total,
+        flight_date,
+        depature_hours,
+        airplane_id,
+        airline_id: airplane.airline_id,
+        estimation,
+        code: makeTicketCode(5),
+        gate: gate,
+        terminal: terminaL,
+        type: FLIGHT_CLASS.FIRST,
+      });
+
+      return res.status(201).json({
+        status: true,
+        message: "3 Products added successfully",
+        data: { economy, business, first },
+      });
+
+
+
       const products = await Product.findAll();
 
       if (!products.length) {
@@ -161,10 +232,12 @@ module.exports = {
           terminal: terminaL,
           type: FLIGHT_CLASS.ECONOMY,
         });
+        priceE = price + (price * 15) / 100;
         const business = await Product.create({
+          
           origin_id,
           destination_id,
-          price: price,
+          price: priceE,
           stock: capacity / 4,
           transit_total,
           flight_date,
@@ -177,10 +250,11 @@ module.exports = {
           terminal: terminaL,
           type: FLIGHT_CLASS.BUSINESS,
         });
+        priceF = price + (price * 45) / 100;
         const first = await Product.create({
           origin_id,
           destination_id,
-          price: price,
+          price: priceF,
           stock: capacity / 4,
           transit_total,
           flight_date,

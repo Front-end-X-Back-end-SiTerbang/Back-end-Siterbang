@@ -4,8 +4,71 @@ const { Op } = require("sequelize");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const airplanes = await Airplane.findAll();
+      //CREATE RANDOM AIRPLANE
+      const airplaneType = [
+        "BOEING 787",
+        "BOEING 767",
+        "BOEING 747",
+        "AIRBUS A330-300",
+        "BOEING 777",
+        "AIRBUS A320",
+        "BOEING 727",
+      ];
+      const getRandAirplane = airplaneType[Math.floor(Math.random() * airplaneType.length)]
+      const airlineID = Math.floor(Math.random() * 73) + 1;
+      const kapasitas = [325, 400, 425, 450, 500, 555, 575, 600];
+      const randKap = kapasitas[Math.floor(Math.random()*kapasitas.length)]
+      function generateAirplaneCode(length) {
+        const kls = ['VVIP ', 'VIP ', 'EXPRESS ' , 'PRIORITY ', 'SUPERCLASS ' , 'EXECUTIVE ']
+        let result = "";
+        let nama = result.concat(kls[Math.floor(Math.random()*kls.length)])
+        let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+          nama += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+        return nama;
+      }
+        const createAirplane = await Airplane.create({
+          name : generateAirplaneCode(5),
+          airline_id : airlineID,
+          type : getRandAirplane,
+          capacity : randKap
+        })
+        const createAirplane1 = await Airplane.create({
+          name : generateAirplaneCode(5),
+          airline_id : airlineID,
+          type : getRandAirplane,
+          capacity : randKap
+        })
+        const createAirplane2 = await Airplane.create({
+          name : generateAirplaneCode(5),
+          airline_id : airlineID,
+          type : getRandAirplane,
+          capacity : randKap
+        })
+        const createAirplane3 = await Airplane.create({
+          name : generateAirplaneCode(5),
+          airline_id : airlineID,
+          type : getRandAirplane,
+          capacity : randKap
+        })
+        const createAirplane4 = await Airplane.create({
+          name : generateAirplaneCode(5),
+          airline_id : airlineID,
+          type : getRandAirplane,
+          capacity : randKap
+        })
+        return res.status(201).json({
+          status : true , 
+          message : "success create airplane",
+          data : {pesawat_1 :createAirplane , pesawat_2: createAirplane1 , pesawat_3 : createAirplane2 , pesawat_4 :createAirplane3 , pesawat_5 : createAirplane4}
+        })
 
+
+      const airplanes = await Airplane.findAll();
       if (!airplanes.length) {
         return res.status(404).json({
           status: false,
@@ -114,11 +177,12 @@ module.exports = {
 
       const airlines = await Airline.findOne({
         where: { name: { [Op.like]: "%" + search + "%" } },
-        attributes: ["id"]
+        attributes: ["id"],
       });
-      if(airlines== null){
+      if (airlines == null) {
         const totalRows = await Airplane.count({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
             ],
@@ -126,10 +190,12 @@ module.exports = {
         });
         const totalPage = Math.ceil(totalRows / limit);
         const result = await Airplane.findAll({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
-          ]},
+            ],
+          },
           offset: offset,
           limit: limit,
           order: [["name", "DESC"]],
@@ -141,9 +207,10 @@ module.exports = {
           totalRows: totalRows,
           totalPage: totalPage,
         });
-      }else {
+      } else {
         const totalRows = await Airplane.count({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
               { airline_id: airlines.id },
@@ -152,11 +219,13 @@ module.exports = {
         });
         const totalPage = Math.ceil(totalRows / limit);
         const result = await Airplane.findAll({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
-              { airline_id: airlines.id  },
-          ]},
+              { airline_id: airlines.id },
+            ],
+          },
           offset: offset,
           limit: limit,
           order: [["name", "DESC"]],
@@ -169,8 +238,6 @@ module.exports = {
           totalPage: totalPage,
         });
       }
-
-      
     } catch (error) {
       next(error);
     }
