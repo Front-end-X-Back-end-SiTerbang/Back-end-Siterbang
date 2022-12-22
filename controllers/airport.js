@@ -113,7 +113,7 @@ module.exports = {
         },
         offset: offset,
         limit: limit,
-        order: [["iata_code", "DESC"]],
+        order: [["id", "DESC"]],
       });
       res.json({
         result: result,
