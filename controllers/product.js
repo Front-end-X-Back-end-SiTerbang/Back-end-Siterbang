@@ -5,78 +5,16 @@ const { FLIGHT_CLASS } = require("../utils/enum");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-
-      const airportIDorigin = Math.floor(Math.random() * 508) + 1;
-      const airportIDdestionation = Math.floor(Math.random() * 508) + 1;
-      if(airportIDorigin == airportIDdestionation){
-        return res.status(400).json({
-          status  : false , message : "origin and destination must diffrent"
-        })
-      }
-      const capacity = airplane.capacity;
-      const gate = makeGate();
-      const terminaL = terminal;
-      const economy = await Product.create({
-        origin_id,
-        destination_id,
-        price: price,
-        stock: capacity / 2,
-        transit_total,
-        flight_date,
-        depature_hours,
-        airplane_id,
-        airline_id: airplane.airline_id,
-        estimation,
-        code: makeTicketCode(5),
-        gate: gate,
-        terminal: terminaL,
-        type: FLIGHT_CLASS.ECONOMY,
-      });
-      priceE = price + (price * 15) / 100;
-      const business = await Product.create({
-        
-        origin_id,
-        destination_id,
-        price: priceE,
-        stock: capacity / 4,
-        transit_total,
-        flight_date,
-        depature_hours,
-        airplane_id,
-        airline_id: airplane.airline_id,
-        estimation,
-        code: makeTicketCode(5),
-        gate: gate,
-        terminal: terminaL,
-        type: FLIGHT_CLASS.BUSINESS,
-      });
-      priceF = price + (price * 45) / 100;
-      const first = await Product.create({
-        origin_id,
-        destination_id,
-        price: priceF,
-        stock: capacity / 4,
-        transit_total,
-        flight_date,
-        depature_hours,
-        airplane_id,
-        airline_id: airplane.airline_id,
-        estimation,
-        code: makeTicketCode(5),
-        gate: gate,
-        terminal: terminaL,
-        type: FLIGHT_CLASS.FIRST,
-      });
-
-      return res.status(201).json({
-        status: true,
-        message: "3 Products added successfully",
-        data: { economy, business, first },
-      });
-
-
-
-      const products = await Product.findAll();
+      const products = await Product.findAll({ include :[{
+        model: Airport,
+        as: "origin",
+        attributes: ["city", "name", 'country'],
+      },
+      {
+        model: Airport,
+        as: "destination",
+        attributes: ["city", "name", 'country'],
+      }], order : [['id', 'DESC']]});
 
       if (!products.length) {
         return res.status(200).json({
@@ -126,20 +64,13 @@ module.exports = {
 
   create: async (req, res, next) => {
     try {
-      const {
-        origin_id,
-        destination_id,
-        transit_total,
-        flight_date,
-        depature_hours,
-        airplane_id,
-        estimation,
-      } = req.body;
+      const {} = req.body;
 
-      let { price, type } = req.body;
+      let { type } = req.body;
 
+      const airplaneID = Math.floor(Math.random() * 404) + 1;
       const airplane = await Airplane.findOne({
-        where: { id: airplane_id },
+        where: { id: airplaneID },
         include: ["airline"],
       });
       if (!airplane) {
@@ -160,9 +91,11 @@ module.exports = {
           },
         });
       }
-
+      const min = 443
+      const max = 504
+      const airportIDdestionation = Math.floor(Math.random() * (max - min + 1)) + min;
       const airport = await Airport.findOne({
-        where: { id: destination_id },
+        where: { id: airportIDdestionation },
         attributes: ["country"],
       });
       if (!airport) {
@@ -193,10 +126,54 @@ module.exports = {
         result += number[Math.floor(Math.random() * number.length)];
         return result;
       }
+
+      const transit = Math.floor(Math.random() * 2);
       let terminal = "DOMESTIC ";
       const alphabet = "AB";
       const number = "123";
+      const hours = [
+        "06:00",
+        "06:30",
+        "07:00",
+        "07:30",
+        "08:00",
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00",
+        "10:30",
+        "11:00",
+        "11:30",
+        "12:00",
+        "12:30",
+        "13:00",
+        "13:30",
+        "14:00",
+        "14:30",
+        "15:00",
+        "15:30",
+      ];
+      const datess = [
+        "2023-01-03",
+        "2023-01-04",
+        "2023-01-05",
+        "2023-01-06",
+        "2023-01-07",
+        "2023-01-08",
+        "2023-01-09",
+        "2023-01-10",
+      ];
+      const priice = [
+        400000, 350000, 500000, 600000, 750000, 700000, 800000, 900000, 850000,
+        1200000, 1000000, 1500000, 1650000, 850000, 950000, 1150000,
+      ];
+      const getPrice = priice[Math.floor(Math.random() * 17)];
+      const flidate = Math.floor(Math.random() * 7);
+      const date = datess[flidate];
+      const retdate = datess[flidate + 1];
+      const depHour = hours[Math.floor(Math.random() * 21)];
 
+      const estimate = Math.floor(Math.random() * 10) + 2;
       if (airport.country == "INDONESIA") {
         terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
         terminal += number[Math.floor(Math.random() * number.length)];
@@ -205,7 +182,16 @@ module.exports = {
         terminal += alphabet[Math.floor(Math.random() * alphabet.length)];
         terminal += number[Math.floor(Math.random() * number.length)];
       }
+     
+      const airportIDorigin = Math.floor(Math.random() * (max - min + 1)) + min;
 
+      if (airportIDorigin == airportIDdestionation) {
+        return res.status(400).json({
+          status: false,
+          message: "origin and destination must be diffrent",
+        });
+      }
+      const price = getPrice;
       const classes = type;
       if (type == FLIGHT_CLASS.ECONOMY) {
       } else if (type == FLIGHT_CLASS.BUSINESS) {
@@ -217,34 +203,33 @@ module.exports = {
         const gate = makeGate();
         const terminaL = terminal;
         const economy = await Product.create({
-          origin_id,
-          destination_id,
+          origin_id: airportIDorigin,
+          destination_id: airportIDdestionation,
           price: price,
-          stock: capacity / 2,
-          transit_total,
-          flight_date,
-          depature_hours,
-          airplane_id,
+          stock: Math.round(capacity / 2),
+          transit_total: transit,
+          flight_date: date,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
           airline_id: airplane.airline_id,
-          estimation,
+          estimation: estimate,
           code: makeTicketCode(5),
           gate: gate,
           terminal: terminaL,
           type: FLIGHT_CLASS.ECONOMY,
         });
-        priceE = price + (price * 15) / 100;
+        priceB = price + (price * 15) / 100;
         const business = await Product.create({
-          
-          origin_id,
-          destination_id,
-          price: priceE,
-          stock: capacity / 4,
-          transit_total,
-          flight_date,
-          depature_hours,
-          airplane_id,
+          origin_id: airportIDorigin,
+          destination_id: airportIDdestionation,
+          price: priceB,
+          stock: Math.round(capacity / 4),
+          transit_total: transit,
+          flight_date: date,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
           airline_id: airplane.airline_id,
-          estimation,
+          estimation: estimate,
           code: makeTicketCode(5),
           gate: gate,
           terminal: terminaL,
@@ -252,16 +237,66 @@ module.exports = {
         });
         priceF = price + (price * 45) / 100;
         const first = await Product.create({
-          origin_id,
-          destination_id,
+          origin_id: airportIDorigin,
+          destination_id: airportIDdestionation,
           price: priceF,
-          stock: capacity / 4,
-          transit_total,
-          flight_date,
-          depature_hours,
-          airplane_id,
+          stock: Math.round(capacity / 4),
+          transit_total: transit,
+          flight_date: date,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
           airline_id: airplane.airline_id,
-          estimation,
+          estimation: estimate,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.FIRST,
+        });
+        const economy1 = await Product.create({
+          origin_id: airportIDdestionation,
+          destination_id: airportIDorigin,
+          price: price,
+          stock: Math.round(capacity / 2),
+          transit_total: transit,
+          flight_date: retdate,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
+          airline_id: airplane.airline_id,
+          estimation: estimate,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.ECONOMY,
+        });
+        priceB = price + (price * 15) / 100;
+        const business1 = await Product.create({
+          origin_id: airportIDdestionation,
+          destination_id: airportIDorigin,
+          price: priceB,
+          stock: Math.round(capacity / 4),
+          transit_total: transit,
+          flight_date: retdate,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
+          airline_id: airplane.airline_id,
+          estimation: estimate,
+          code: makeTicketCode(5),
+          gate: gate,
+          terminal: terminaL,
+          type: FLIGHT_CLASS.BUSINESS,
+        });
+        priceF = price + (price * 45) / 100;
+        const first1 = await Product.create({
+          origin_id: airportIDdestionation,
+          destination_id: airportIDorigin,
+          price: priceF,
+          stock: Math.round(capacity / 4),
+          transit_total: transit,
+          flight_date: retdate,
+          depature_hours: depHour,
+          airplane_id: airplaneID,
+          airline_id: airplane.airline_id,
+          estimation: estimate,
           code: makeTicketCode(5),
           gate: gate,
           terminal: terminaL,
@@ -270,8 +305,8 @@ module.exports = {
 
         return res.status(201).json({
           status: true,
-          message: "3 Products added successfully",
-          data: { economy, business, first },
+          message: "6 Products added successfully",
+          data: { economy, business, first, economy1, business1, first1 },
         });
       } else {
         return res.status(422).json({
@@ -485,11 +520,10 @@ module.exports = {
         },
       };
 
-
       //SEARCH
       if (roundTrip) {
         if (!kelas) {
-          if(!returnDate){
+          if (!returnDate) {
             // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
             const totalRows = await Product.count(search_filter.RTACNR);
             const totalPage = Math.ceil(totalRows / limit);
@@ -500,33 +534,35 @@ module.exports = {
               limit: limit,
               totalRows: totalRows,
               totalPage: totalPage,
-          });
-          }else{
-            if(!returnDate){
-              // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
-            const totalRows = await Product.count(search_filter.RTACNR);
-            const totalPage = Math.ceil(totalRows / limit);
-            const result = await Product.findAll(search_filter.RTACNR);
-            res.json({
-              result: result,
-              page: page,
-              limit: limit,
-              totalRows: totalRows,
-              totalPage: totalPage,
             });
-            }else{
-          // ROUND-TRIP, ALL CLASSES
-            const totalRows = await Product.count(search_filter.RTAC);
-            const totalPage = Math.ceil(totalRows / limit);
-            const result = await Product.findAll(search_filter.RTAC);
-            res.json({
-              result: result,
-              page: page,
-              limit: limit,
-              totalRows: totalRows,
-              totalPage: totalPage,
-            });}
-        }} else {
+          } else {
+            if (!returnDate) {
+              // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
+              const totalRows = await Product.count(search_filter.RTACNR);
+              const totalPage = Math.ceil(totalRows / limit);
+              const result = await Product.findAll(search_filter.RTACNR);
+              res.json({
+                result: result,
+                page: page,
+                limit: limit,
+                totalRows: totalRows,
+                totalPage: totalPage,
+              });
+            } else {
+              // ROUND-TRIP, ALL CLASSES
+              const totalRows = await Product.count(search_filter.RTAC);
+              const totalPage = Math.ceil(totalRows / limit);
+              const result = await Product.findAll(search_filter.RTAC);
+              res.json({
+                result: result,
+                page: page,
+                limit: limit,
+                totalRows: totalRows,
+                totalPage: totalPage,
+              });
+            }
+          }
+        } else {
           // ROUND-TRIP, SPECIFIC CLASS
           const totalRows = await Product.count(search_filter.RTSC);
           const totalPage = Math.ceil(totalRows / limit);

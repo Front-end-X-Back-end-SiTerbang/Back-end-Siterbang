@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       depature_hours: {
-        type: Sequelize.TIME,
+        type: Sequelize.STRING,
       },
       airline_id: {
         type: Sequelize.INTEGER,

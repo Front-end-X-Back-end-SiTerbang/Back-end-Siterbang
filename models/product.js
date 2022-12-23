@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       stock: DataTypes.INTEGER,
       transit_total: DataTypes.INTEGER,
       flight_date: DataTypes.STRING,
-      depature_hours: DataTypes.TIME,
+      depature_hours: DataTypes.STRING,
       airline_id: DataTypes.INTEGER,
       airplane_id: DataTypes.INTEGER,
       estimation: DataTypes.FLOAT,
