@@ -5,6 +5,7 @@ const mid = require("../middlewares");
 
 const upload = require("../utils/media_handling/storage");
 
+router.get("/", mid.restrict.mustLogin, c.user.getUserInfo);
 router.put(
   "/profile/photo",
   mid.restrict.mustLogin,

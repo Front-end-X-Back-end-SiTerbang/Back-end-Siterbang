@@ -85,6 +85,18 @@ module.exports = {
       next(err);
     }
   },
+  getUserInfo : async(req, res, next) =>{
+    const token = req.headers["authorization"];
+    const user = jwt.verify(token, JWT_SECRET);
+    
+    const userData = await User.findOne({where : {id : user.id} , attributes : ['name', 'email', 'phone' , 'gender', 'postal_code', 'address', 'photo']})
+    return res.status(200).json({
+      status : true,
+      message : "success get user information",
+      data : userData
+    })
+  }
+  ,
   updateAvatar: async (req, res, next) => {
     try {
       const token = req.headers["authorization"];

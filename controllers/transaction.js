@@ -1,6 +1,14 @@
-const { Transaction, Product, Payment, Booking_detail } = require("../models");
+const {
+  Transaction,
+  Product,
+  Payment,
+  Booking_detail,
+  Airport,
+  Airline,
+} = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
+const { FLIGHT_CLASS } = require("../utils/enum");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -25,8 +33,7 @@ module.exports = {
   },
   createTransaction: async (req, res, next) => {
     try {
-      const { product_id, total_passenger } = req.body;
-
+      const { product_id, total_passenger, passengers } = req.body;
       const token = req.headers["authorization"];
       const user = jwt.verify(token, JWT_SECRET);
 
@@ -41,19 +48,56 @@ module.exports = {
 
       const price = product.price;
       const total = price * total_passenger;
-      const newTransaction = await Transaction.create({
+      const createTransaction = await Transaction.create({
         product_id,
-        is_paid: false,
+        is_paid: true,
         is_cancelled: false,
         user_id: user.id,
         total_order: total,
         total_passenger,
       });
+      const transactionExist = await Transaction.findOne({
+        where: { id: createTransaction.id },
+        include: ["product"],
+      });
 
+      passengers.forEach(async (element) => {
+        const max = 200;
+        const seatNum = Math.floor(Math.random() * max + 1);
+        const seatCode = ["E", "B", "F"];
+        const productType = product.type;
+        let seat = "seat";
+        if (productType == FLIGHT_CLASS.ECONOMY) {
+          seat = seatCode[0] + String(seatNum);
+        } else if (productType == FLIGHT_CLASS.BUSINESS) {
+          seat = seatCode[1] + String(seatNum);
+        } else if (productType == FLIGHT_CLASS.FIRST) {
+          seat = seatCode[2] + String(seatNum);
+        } else {
+          return res.status(400).json({
+            status: false,
+            message: "Incorrect Flight Class",
+          });
+        }
+        const createPassengers = await Booking_detail.create({
+          nik: element.nik,
+          passenger_name: element.passenger_name,
+          passenger_phone: element.passenger_phone,
+          transaction_id: createTransaction.id,
+          seat_number: seat,
+        });
+      });
+
+      const newTransaction = await Transaction.findOne({
+        where: { id: createTransaction.id },
+      });
+      const passengers_detail = await Booking_detail.findAll({
+        where: { transaction_id: createTransaction.id },
+      });
       return res.status(201).json({
         status: true,
         message: "success create transaction",
-        data: newTransaction,
+        data: { transaction: newTransaction, passengers_detail },
       });
     } catch (error) {
       next(error);
@@ -65,7 +109,27 @@ module.exports = {
       const user = jwt.verify(token, JWT_SECRET);
       const userTransactions = await Transaction.findAll({
         where: { user_id: user.id, is_cancelled: false },
-        include: ["product", "booking_details"],
+        include: [
+          {
+            model: Product,
+            as: "product",
+            include: [
+              { model: Airline, as: "airline", attributes: ["name"] },
+              {
+                model: Airport,
+                as: "origin",
+                attributes: ["iata_code", "city", "name"],
+              },
+              {
+                model: Airport,
+                as: "destination",
+                attributes: ["iata_code", "city", "name"],
+              },
+            ],
+          },
+          "booking_details",
+        ],
+        order: [["id", "DESC"]],
       });
       if (!userTransactions.length) {
         return res.status(200).json({
