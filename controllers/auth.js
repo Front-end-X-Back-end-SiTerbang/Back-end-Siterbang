@@ -10,6 +10,7 @@ const crypto = require("node:crypto");
 const activateAccount = require("../utils/email/activateAccountEmail");
 const resetPassword = require("../utils/email/resetAccountEmail");
 const sendEmail = require("../utils/email/email");
+const googleOauth2 = require("../utils/oauth/google");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -84,7 +85,7 @@ module.exports = {
       await sendEmail.sendEmail(templateEmail);
       await User.update({ emailToken: token }, { where: { email } });
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: true,
         message: "Register success!",
         data: {
@@ -96,6 +97,55 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+  google: async (req, res, next) => {
+    const code = req.query.code;
+
+    if (!code) {
+      const url = googleOauth2.generateAuthURL();
+      return res.redirect(url);
+    }
+
+    await googleOauth2.setCredentials(code);
+
+    const { data } = await googleOauth2.getUserData();
+
+    var userExist = await User.findOne({
+      where: { email: data.email },
+    });
+
+    if (!userExist) {
+      userExist = await User.create({
+        name: data.name,
+        password: encryptedPassword,
+        phone,
+        address,
+        gender,
+        postal_code,
+        photo,
+        role: ROLE.BUYER,
+        user_type: TYPE.GOOGLE,
+        is_verified: TRUE,
+      });
+    }
+
+    const payload = {
+      id: userExist.id,
+      name: userExist.name,
+      email: userExist.email,
+      user_type: userExist.user_type,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+
+    return res.status(200).json({
+      status: true,
+      message: "Success",
+      data: {
+        user_id: userExist.id,
+        token: token,
+      },
+    });
   },
   activation: async (req, res, next) => {
     try {
@@ -153,6 +203,7 @@ module.exports = {
         message: "login successful!",
         data: {
           email: user.email,
+          role: user.ROLE,
           token: token,
         },
       });

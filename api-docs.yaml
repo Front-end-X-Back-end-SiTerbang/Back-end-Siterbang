@@ -508,6 +508,81 @@ paths:
                     message: You're not authorized
         '500':
           description: Internal Server Error
+    put:
+      summary: Update Airlines By Id
+      description: Update Airlines By Id
+      tags:
+        - Airlines
+      parameters:
+        - schema:
+            type: integer
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: integer
+            examples:
+              example-body:
+                value:
+                  name: Batik Air
+                  phone: 567893427
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: success update airlines
+                    data:
+                      name: Garuda Indonesia
+                      phone: 09875367289
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: You're not authorized
+        '500':
+          description: Internal Server Error
   /airlines/{id}:
     put:
       summary: Update Airlines

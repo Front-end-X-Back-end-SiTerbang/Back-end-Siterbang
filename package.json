@@ -22,9 +22,13 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.8.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "pg": "^8.8.0",
+    "qr-image": "^3.2.0",
     "sequelize": "^6.25.7",
     "swagger-ui-express": "^4.6.0",
+    "web-push": "^3.5.0",
     "xss-clean": "^0.1.1",
     "yamljs": "^0.3.0"
   }

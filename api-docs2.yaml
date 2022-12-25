@@ -1,0 +1,1045 @@
+openapi: 3.0.0
+info:
+  title: Si Terbang
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Localhost
+  - url: https://siterbang-api-test.km3ggwp.com
+    description: Deploy On Railway
+tags:
+  - name: Auth
+  - name: Airlines
+  - name: Airplanes
+  - name: Airports
+  - name: Products
+  - name: Transactions
+  - name: Payment
+  - name: User / Profile
+  - name: Booking Details
+  - name: Stats
+paths:
+  /auth/get:
+    get:
+      tags:
+        - Auth
+      summary: "Auth  : Get all users"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: "Auth : Register"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: "{\r\n    \"name\" : \"Frontend Admin\",\r\n    \"email\" : \"frontend@siterbang.com\",\r\n    \"password\" : \"siterbang\",\r\n    \"confirm_password\" : \"siterbang\",\r\n    \"phone\": \"085123456\",\r\n    \"address\" : \"on the sky\",\r\n    \"postal_code\" : 23154,\r\n    \"gender\" : \"MALE\"\r\n    \"photo\" : \"anonym.jpg\"\r\n}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: "Auth : Login Admin"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: backend@siterbang.com
+                password: siterbang
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: "Auth : Forgot Password"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: 17.denyseptian@gmail.com
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airlines:
+    post:
+      tags:
+        - Airlines
+      summary: "Airlines: Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Sriwijaya Air
+                phone: "55045"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwNTk5MzEzfQ.eH8A7OYhPcb2l0IfI_FgblyTNmzrgMhVxaBpM5KOWF8
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airlines/all:
+    get:
+      tags:
+        - Airlines
+      summary: "Airlines  : GetAll"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airlines/27:
+    get:
+      tags:
+        - Airlines
+      summary: "Airlines  : Get an Airline"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airlines/3:
+    put:
+      tags:
+        - Airlines
+      summary: "Airlines  : Update airline"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Garuda Indonesia
+                phone: 0771 777 777
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njg1OTg3fQ.QSw7618-_4ar4g-jyhs7ztO6ktyPGWppYOhjK5SAGAw
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airlines/6:
+    delete:
+      tags:
+        - Airlines
+      summary: "Airlines : Delete"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njg1OTg3fQ.QSw7618-_4ar4g-jyhs7ztO6ktyPGWppYOhjK5SAGAw
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airplanes:
+    post:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Singapore Air First Class
+                airline_id: 4
+                type: Boeing 747
+                capacity: 400
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwNTk5MzEzfQ.eH8A7OYhPcb2l0IfI_FgblyTNmzrgMhVxaBpM5KOWF8
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airplanes/all:
+    get:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Get All"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airplanes/2:
+    get:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Get an airplane"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Delete"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njk4MzM3fQ.5P5uWZ9syXv2Lm8Az5kNVjN8eMNmDUuuFQx5dLlZIS4
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airplanes/airlines-id/2:
+    get:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Get by Airlines id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njk4MzM3fQ.5P5uWZ9syXv2Lm8Az5kNVjN8eMNmDUuuFQx5dLlZIS4
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airplanes/1:
+    put:
+      tags:
+        - Airplanes
+      summary: "Airplanes  : Update"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: "{\r\n    \"name\": \"LA Evos-Special Edition\",\r\n    \"airline_id\": 2,\r\n    \"type\": \"Airbus A380-800\",\r\n}"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njk4MzM3fQ.5P5uWZ9syXv2Lm8Az5kNVjN8eMNmDUuuFQx5dLlZIS4
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airports:
+    post:
+      tags:
+        - Airports
+      summary: "Airport : Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                iata_code: MKS
+                name: BANDARA MAKASSAR
+                city: MAKASSAR
+                country: INDONESIA
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Airports
+      summary: "Airport : Search"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: INDONESIA
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airports/all:
+    get:
+      tags:
+        - Airports
+      summary: "Airport : GetAll"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airports/cgk:
+    get:
+      tags:
+        - Airports
+      summary: "Airport : Get an Airport by iata_code"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5ODE0NTU3fQ.hRcu_4_gfXmMxKR7pdCf5CVb0Gb9rLhtEOlKAahwp40
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airports/3:
+    put:
+      tags:
+        - Airports
+      summary: "Airport : Update airports"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Garuda Indonesia
+                phone: 0771 777 777
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njg1OTg3fQ.QSw7618-_4ar4g-jyhs7ztO6ktyPGWppYOhjK5SAGAw
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /airports/2:
+    delete:
+      tags:
+        - Airports
+      summary: "Airport : Delete"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njg1OTg3fQ.QSw7618-_4ar4g-jyhs7ztO6ktyPGWppYOhjK5SAGAw
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/all:
+    get:
+      tags:
+        - Products
+      summary: "Products : Get all"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/2:
+    get:
+      tags:
+        - Products
+      summary: "Products : Get by id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products:
+    post:
+      tags:
+        - Products
+      summary: "Products : Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                origin_id: 3
+                destination_id: 4
+                price: 600000
+                transit_total: 0
+                flight_date: "2022-12-26"
+                depature_hours: "15:20"
+                airplane_id: 2
+                estimation: 2.5
+                gate: G1
+                terminal: "Y"
+                type: ECONOMY CLASS
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/{id}:
+    put:
+      tags:
+        - Products
+      summary: "Products : Update"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: "{\r\n    \"origin_id\": 3,\r\n    \"destination_id\": 4,\r\n    \"price\": 600000,\r\n    \"stock\" : 250\r\n    \"transit_total\": 0,\r\n    \"flight_date\": \"2022-12-26\",\r\n    \"depature_hours\" : \"15:20\",\r\n    \"airplane_id\": 6,\r\n    \"estimation\": 2.5,\r\n    \"gate\": \"G1\",\r\n    \"terminal\": \"Y\",\r\n    \"type\": \"ECONOMY CLASS\"\r\n}"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/search:
+    get:
+      tags:
+        - Products
+      summary: "Products : Search"
+      parameters:
+        - name: origin_id
+          in: query
+          schema:
+            type: integer
+          example: "3"
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          example: "4"
+        - name: date
+          in: query
+          schema:
+            type: string
+          example: "2022-12-26"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/7:
+    delete:
+      tags:
+        - Products
+      summary: "Products : Delete"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5ODI3MzU3fQ.uWaO_hruE6Wrp7PbgHLnir764_XF5ZxK8tOo61SVp_U
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions/all:
+    get:
+      tags:
+        - Transactions
+      summary: "Transaction : Get All"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions:
+    post:
+      tags:
+        - Transactions
+      summary: "Transaction : Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                product_id: 8
+                total_passenger: 2
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /my-transactions:
+    get:
+      tags:
+        - Transactions
+      summary: "Transaction : Get user transactions"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions/14:
+    get:
+      tags:
+        - Transactions
+      summary: "Transaction : Get by id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5OTE2ODg5fQ._gkSrt7zhk0UXq5CZOOIuuJJ02w3qB0io2XEO6JWG6I
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions/products/1:
+    get:
+      tags:
+        - Transactions
+      summary: "Transaction : Get by product_id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions/3:
+    put:
+      tags:
+        - Transactions
+      summary: "Transaction : Payment"
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /transactions/cancel/:
+    get:
+      tags:
+        - Transactions
+      summary: "Transaction : Cancel"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5OTE2ODg5fQ._gkSrt7zhk0UXq5CZOOIuuJJ02w3qB0io2XEO6JWG6I
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/all:
+    get:
+      tags:
+        - Payment
+      summary: "Payments : Get all"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/1:
+    get:
+      tags:
+        - Payment
+      summary: "Payments : Get by id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Payment
+      summary: "Payments : Update"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                number: 999112 33201
+                name: Sultan Deny
+                type: Credit Card
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwMDUzNDA2fQ.Fi7VQgW6GdTGh0bmPQvNjw_0fvqmRTUeTiaFqkKNsqs
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /payments:
+    post:
+      tags:
+        - Payment
+      summary: "Payments : Create"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                number: "109887123131"
+                name: Sultan BEJS
+                type: Credit Card
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/top-up/3:
+    put:
+      tags:
+        - Payment
+      summary: "Payments : TopUp"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                balance: 1000000000
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /payments/2:
+    delete:
+      tags:
+        - Payment
+      summary: "Payments : Delete"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwMDUzNDA2fQ.Fi7VQgW6GdTGh0bmPQvNjw_0fvqmRTUeTiaFqkKNsqs
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /user/profile/photo/:
+    put:
+      tags:
+        - User / Profile
+      summary: "User : Update Photo"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /user/profile:
+    put:
+      tags:
+        - User / Profile
+      summary: "User : Update Profile"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Backend Admin
+                email: backend@siterbang.com
+                phone: +62 123 777
+                address: Jl. Binarian, Kota Binar , Indonesia
+                postal_code: 41651
+                gender: MALE
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /user/profile/change-password:
+    put:
+      tags:
+        - User / Profile
+      summary: "User : Update Password"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                old_password: siterbang1
+                password: siterbang
+                confirm_new_password: siterbang
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /booking/14:
+    get:
+      tags:
+        - Booking Details
+      summary: "Booking : Get details by transaction_id"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /booking/3:
+    post:
+      tags:
+        - Booking Details
+      summary: "Booking : Create booking detail"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                nik: "10003511164123"
+                passenger_name: Raja Salimin
+                passenger_phone: +1 64216854
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-user:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total User"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-airline:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Airlines"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-airplane:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Airplanes"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-airport:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Airport"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-booking:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Booking"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-transaction:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Transaction"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-revenue:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Revenue"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /total-product:
+    get:
+      tags:
+        - Stats
+      summary: "Stats : Total Products"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}

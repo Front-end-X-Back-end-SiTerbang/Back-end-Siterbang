@@ -1,9 +1,14 @@
 require("dotenv").config();
+
+const { PORT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } =
+  process.env;
+
 const express = require("express");
 const morgan = require("morgan");
 const xss = require("xss-clean");
 const app = express();
 const routes = require("./routes");
+const webpush = require("web-push");
 const cors = require("cors");
 const YAML = require("yamljs");
 
@@ -45,8 +50,6 @@ app.use((err, req, res, next) => {
     data: null,
   });
 });
-
-const { PORT } = process.env;
 
 app.listen(PORT, () =>
   console.log(`running on port ${PORT} || http://localhost:${PORT}`)

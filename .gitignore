@@ -1,3 +1,6 @@
 node_modules
 .env
 api-docs.json
+qrcode.js
+qr-code.js
+20221214125611-create-qr-code.js
