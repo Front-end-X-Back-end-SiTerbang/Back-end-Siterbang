@@ -7,7 +7,7 @@ const transaction = require("./transaction");
 const payment = require("./payment");
 const user = require("./user");
 const booking = require("./booking");
-const qrcode = require("./qr-code");
+// const qrcode = require("./qr-code");
 
 module.exports = {
   auth,
@@ -19,5 +19,5 @@ module.exports = {
   payment,
   booking,
   user,
-  qrcode,
+  // qrcode,
 };

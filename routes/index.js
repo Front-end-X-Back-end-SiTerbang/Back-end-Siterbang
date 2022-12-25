@@ -9,7 +9,7 @@ const transaction = require("./transaction");
 const user = require("./user");
 const booking = require("./booking");
 const payment = require("./payment");
-const qrcode = require("./qrcode");
+// const qrcode = require("./qrcode");
 const mid = require("../middlewares");
 const c = require("../controllers");
 
@@ -22,7 +22,7 @@ router.use("/transactions", transaction);
 router.use("/payments", payment);
 router.use("/booking", booking);
 router.use("/user", user);
-router.use("/generateqrcode", qrcode);
+// router.use("/generateqrcode", qrcode);
 
 //get user transaction
 router.get(
