@@ -203,7 +203,7 @@ module.exports = {
         message: "login successful!",
         data: {
           email: user.email,
-          role: user.ROLE,
+          role: user.role,
           token: token,
         },
       });
