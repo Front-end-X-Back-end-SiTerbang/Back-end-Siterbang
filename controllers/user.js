@@ -114,7 +114,7 @@ module.exports = {
 
       const uploadPhoto = await imagekit.upload({
         file,
-        fileName: req.file.originalname,
+        fileName: req.file.originalname,   
       });
 
       const updated = await User.update(
