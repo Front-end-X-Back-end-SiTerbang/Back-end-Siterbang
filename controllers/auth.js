@@ -170,11 +170,10 @@ module.exports = {
   },
   google: async (req, res, next) => {
     try {
-      const { accessToken } = req.body;
-      const options = { headers: { Authorization: `Bearer ${accessToken}` } };
+      const { access_token } = req.body;
+      // const options = { headers: { Authorization: `Bearer ${accessToken}` } };
       const response = await axios.get(
-        "https://www.googleapis.com/oauth2/v2/userinfo",
-        options
+        `https://www.googleapis.com/oauth2/v2/userinfo?=access_token=${access_token}`
       );
       const { email, name } = response.data;
 
@@ -185,6 +184,7 @@ module.exports = {
           name,
           role: ROLE.BUYER,
           is_verified: VERIFIED.TRUE,
+          user_type: TYPE.GOOGLE,
         });
       }
 
