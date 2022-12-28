@@ -5,6 +5,7 @@ const {
   Booking_detail,
   Airport,
   Airline,
+  Notification,
 } = require("../models");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
@@ -37,7 +38,10 @@ module.exports = {
       const token = req.headers["authorization"];
       const user = jwt.verify(token, JWT_SECRET);
 
-      const product = await Product.findOne({ where: { id: product_id } });
+      const product = await Product.findOne({
+        where: { id: product_id },
+        include: [{ model: Airport, as: "destination", attributes: ["city"] }],
+      });
       if (!product) {
         return res.status(200).json({
           status: false,
@@ -94,6 +98,14 @@ module.exports = {
       const passengers_detail = await Booking_detail.findAll({
         where: { transaction_id: createTransaction.id },
       });
+      const notif = await Notification.create({
+        title: "Transaksi Berhasil",
+        description: `Cek ticket ke ${product.origin.city} kamu disini`,
+        read: false,
+        user_id: user.id,
+        transaction_id: createTransaction.id,
+      });
+
       return res.status(201).json({
         status: true,
         message: "success create transaction",
