@@ -3,7 +3,7 @@ const router = express.Router();
 const controllers = require("../controllers");
 
 router.post("/register", controllers.auth.register);
-router.get("/google", controllers.auth.google);
+router.post("/google", controllers.auth.google);
 // router.post("/google", controllers.auth.google);
 router.get("/activation", controllers.auth.activation);
 router.post("/login", controllers.auth.login);
