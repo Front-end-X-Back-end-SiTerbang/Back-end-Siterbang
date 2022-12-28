@@ -17,6 +17,9 @@ module.exports = {
       is_cancelled: {
         type: Sequelize.BOOLEAN,
       },
+      is_read: {
+        type: Sequelize.BOOLEAN,
+      },
       user_id: {
         type: Sequelize.INTEGER,
       },

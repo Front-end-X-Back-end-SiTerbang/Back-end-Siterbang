@@ -10,6 +10,7 @@ const {
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { FLIGHT_CLASS } = require("../utils/enum");
+const { update } = require("./airlines");
 
 module.exports = {
   getAll: async (req, res, next) => {
@@ -57,6 +58,7 @@ module.exports = {
         is_paid: true,
         is_cancelled: false,
         user_id: user.id,
+        is_read: false,
         total_order: total,
         total_passenger,
       });
@@ -300,6 +302,26 @@ module.exports = {
       next(error);
     }
   },
+  updateTransactionRead: async (req, res, next) => {
+    const { id } = req.params;
+
+    const findOne = await Transaction.findOne({
+      where: { id },
+    });
+
+    const updated = await Transaction.update(
+      {
+        is_read: true,
+      },
+      { where: { id } }
+    );
+
+    return res.status(200).json({
+      status: true,
+      message: "success",
+      data: updated,
+    });
+  },
   countAll: async (req, res, next) => {
     try {
       const countAll = await Transaction.count();
@@ -307,7 +329,7 @@ module.exports = {
         where: { is_paid: false },
       });
       const countPaid = await Transaction.count({ where: { is_paid: true } });
-
+b
       return res.status(200).json({
         status: true,
         message: "success count transaction data",

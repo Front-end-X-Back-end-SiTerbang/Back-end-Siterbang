@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.INTEGER,
       total_order: DataTypes.INTEGER,
       total_passenger: DataTypes.INTEGER,
+      is_read: DataTypes.BOOLEAN,
     },
     {
       sequelize,

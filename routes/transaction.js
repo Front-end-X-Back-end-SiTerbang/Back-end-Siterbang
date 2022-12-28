@@ -17,5 +17,10 @@ router.get(
   mid.restrict.mustLogin,
   c.transaction.cancelTransaction
 );
+router.put(
+  "/notif/:id",
+  mid.restrict.mustLogin,
+  c.transaction.updateTransactionRead
+);
 
 module.exports = router;

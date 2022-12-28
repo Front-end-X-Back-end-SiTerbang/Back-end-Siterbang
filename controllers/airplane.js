@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const airplanes = await Airplane.findAll();
+      const airplanes = await Airplane.findAll({ include: [["airline"]] });
 
       if (!airplanes.length) {
         return res.status(404).json({
@@ -114,11 +114,12 @@ module.exports = {
 
       const airlines = await Airline.findOne({
         where: { name: { [Op.like]: "%" + search + "%" } },
-        attributes: ["id"]
+        attributes: ["id"],
       });
-      if(airlines== null){
+      if (airlines == null) {
         const totalRows = await Airplane.count({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
             ],
@@ -126,10 +127,12 @@ module.exports = {
         });
         const totalPage = Math.ceil(totalRows / limit);
         const result = await Airplane.findAll({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
-          ]},
+            ],
+          },
           offset: offset,
           limit: limit,
           order: [["name", "DESC"]],
@@ -141,9 +144,10 @@ module.exports = {
           totalRows: totalRows,
           totalPage: totalPage,
         });
-      }else {
+      } else {
         const totalRows = await Airplane.count({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
               { airline_id: airlines.id },
@@ -152,11 +156,13 @@ module.exports = {
         });
         const totalPage = Math.ceil(totalRows / limit);
         const result = await Airplane.findAll({
-          where: { [Op.or]: [
+          where: {
+            [Op.or]: [
               { name: { [Op.like]: "%" + search + "%" } },
               { type: { [Op.like]: "%" + search + "%" } },
-              { airline_id: airlines.id  },
-          ]},
+              { airline_id: airlines.id },
+            ],
+          },
           offset: offset,
           limit: limit,
           order: [["name", "DESC"]],
@@ -169,8 +175,6 @@ module.exports = {
           totalPage: totalPage,
         });
       }
-
-      
     } catch (error) {
       next(error);
     }
