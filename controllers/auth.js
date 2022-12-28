@@ -173,7 +173,7 @@ module.exports = {
       const { access_token } = req.body;
       // const options = { headers: { Authorization: `Bearer ${accessToken}` } };
       const response = await axios.get(
-        `https://www.googleapis.com/oauth2/v2/userinfo?=access_token=${access_token}`
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
       );
       const { email, name } = response.data;
 
@@ -205,6 +205,7 @@ module.exports = {
         },
       });
     } catch (err) {
+      console.log(err);
       next(err);
     }
   },
