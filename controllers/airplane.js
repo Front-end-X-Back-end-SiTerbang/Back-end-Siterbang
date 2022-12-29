@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const airplanes = await Airplane.findAll({ include: [["airline"]] });
+      const airplanes = await Airplane.findAll({ include: ["airline"] });
 
       if (!airplanes.length) {
         return res.status(404).json({
