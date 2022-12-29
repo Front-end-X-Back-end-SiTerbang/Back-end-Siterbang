@@ -62,10 +62,6 @@ module.exports = {
         total_order: total,
         total_passenger,
       });
-      const transactionExist = await Transaction.findOne({
-        where: { id: createTransaction.id },
-        include: ["product"],
-      });
 
       passengers.forEach(async (element) => {
         const max = 200;
@@ -95,14 +91,14 @@ module.exports = {
       });
 
       const newTransaction = await Transaction.findOne({
-        where: { id: createTransaction.id },
+        where: { id: createTransaction.id }, include : ['product'],
       });
       const passengers_detail = await Booking_detail.findAll({
         where: { transaction_id: createTransaction.id },
       });
       const notif = await Notification.create({
         title: "Transaksi Berhasil",
-        description: `Cek ticket ke ${product.origin.city} kamu disini`,
+        description: `Cek ticket ke ${product.destination.city} kamu disini`,
         read: false,
         user_id: user.id,
         transaction_id: createTransaction.id,
