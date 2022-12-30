@@ -85,18 +85,28 @@ module.exports = {
       next(err);
     }
   },
-  getUserInfo : async(req, res, next) =>{
+  getUserInfo: async (req, res, next) => {
     const token = req.headers["authorization"];
     const user = jwt.verify(token, JWT_SECRET);
-    
-    const userData = await User.findOne({where : {id : user.id} , attributes : ['name', 'email', 'phone' , 'gender', 'postal_code', 'address', 'photo']})
+
+    const userData = await User.findOne({
+      where: { id: user.id },
+      attributes: [
+        "name",
+        "email",
+        "phone",
+        "gender",
+        "postal_code",
+        "address",
+        "photo",
+      ],
+    });
     return res.status(200).json({
-      status : true,
-      message : "success get user information",
-      data : userData
-    })
-  }
-  ,
+      status: true,
+      message: "success get user information",
+      data: userData,
+    });
+  },
   updateAvatar: async (req, res, next) => {
     try {
       const token = req.headers["authorization"];
@@ -114,7 +124,7 @@ module.exports = {
 
       const uploadPhoto = await imagekit.upload({
         file,
-        fileName: req.file.originalname,   
+        fileName: req.file.originalname,
       });
 
       const updated = await User.update(
@@ -128,6 +138,31 @@ module.exports = {
         status: true,
         message: "Update Photo Succesfull!",
         data: updated.photo,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+  deleteUser: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const userExist = await User.findOne({
+        where: { id },
+      });
+
+      if(!userExist) {
+        return res.status(404).json({
+          
+        })
+      }
+
+      const deleted = await User.destroy({ where: { id } });
+
+      return res.status(200).json({
+        status: true,
+        message: "delete data successful!",
+        dat: deleted,
       });
     } catch (err) {
       next(err);
