@@ -15,7 +15,7 @@ const { update } = require("./airlines");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const transactions = await Transaction.findAll();
+      const transactions = await Transaction.findAll({ include: ["product"] });
 
       if (!transactions.length) {
         return res.status(200).json({
@@ -91,7 +91,8 @@ module.exports = {
       });
 
       const newTransaction = await Transaction.findOne({
-        where: { id: createTransaction.id }, include : ['product'],
+        where: { id: createTransaction.id },
+        include: ["product"],
       });
       const passengers_detail = await Booking_detail.findAll({
         where: { transaction_id: createTransaction.id },
@@ -325,7 +326,7 @@ module.exports = {
         where: { is_paid: false },
       });
       const countPaid = await Transaction.count({ where: { is_paid: true } });
-b
+      b;
       return res.status(200).json({
         status: true,
         message: "success count transaction data",
