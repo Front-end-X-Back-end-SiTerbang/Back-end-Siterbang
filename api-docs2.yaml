@@ -3,10 +3,7 @@ info:
   title: Si Terbang
   version: 1.0.0
 servers:
-  - url: http://localhost:3000
-    description: Localhost
-  - url: https://siterbang-api-test.km3ggwp.com
-    description: Deploy On Railway
+  - url: http://{{host}}
 tags:
   - name: Auth
   - name: Airlines
@@ -81,25 +78,44 @@ paths:
           content:
             application/json: {}
   /airlines:
+    get:
+      tags:
+        - Airlines
+      summary: "Airlines : Search"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: LION
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
     post:
       tags:
         - Airlines
-      summary: "Airlines: Create"
+      summary: "Airlines : Create"
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                name: Sriwijaya Air
-                phone: "55045"
+                name: Citilink
+                phone: "08135154135"
       parameters:
         - name: Authorization
           in: header
           schema:
             type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwNTk5MzEzfQ.eH8A7OYhPcb2l0IfI_FgblyTNmzrgMhVxaBpM5KOWF8
+          example: "{{token}}"
       responses:
         "200":
           description: Successful response
@@ -179,6 +195,27 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /airplanes/:
+    get:
+      tags:
+        - Airplanes
+      summary: "Airplanes : Search"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+        - name: search
+          in: query
+          schema:
+            type: string
+          example: GARUDA
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
   /airplanes:
     post:
       tags:
@@ -190,17 +227,16 @@ paths:
             schema:
               type: object
               example:
-                name: Singapore Air First Class
-                airline_id: 4
-                type: Boeing 747
-                capacity: 400
+                name: Wings Holly Air
+                airline_id: 32
+                type: Airbus 340
+                capacity: 500
       parameters:
         - name: Authorization
           in: header
           schema:
             type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjcwNTk5MzEzfQ.eH8A7OYhPcb2l0IfI_FgblyTNmzrgMhVxaBpM5KOWF8
+          example: "{{token}}"
       responses:
         "200":
           description: Successful response
@@ -320,26 +356,6 @@ paths:
           description: Successful response
           content:
             application/json: {}
-    get:
-      tags:
-        - Airports
-      summary: "Airport : Search"
-      parameters:
-        - name: Authorization
-          in: header
-          schema:
-            type: string
-          example: "{{token}}"
-        - name: search
-          in: query
-          schema:
-            type: string
-          example: INDONESIA
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json: {}
   /airports/all:
     get:
       tags:
@@ -356,18 +372,17 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /airports/cgk:
+  /airports/:
     get:
       tags:
         - Airports
-      summary: "Airport : Get an Airport by iata_code"
+      summary: "Airport : Get by iata_code"
       parameters:
         - name: Authorization
           in: header
           schema:
             type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5ODE0NTU3fQ.hRcu_4_gfXmMxKR7pdCf5CVb0Gb9rLhtEOlKAahwp40
+          example: "{{token}}"
       responses:
         "200":
           description: Successful response
@@ -398,18 +413,48 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /airports/2:
+  /airports/HLP:
     delete:
       tags:
         - Airports
-      summary: "Airport : Delete"
+      summary: "Airport : Delete by iata_code"
       parameters:
         - name: Authorization
           in: header
           schema:
             type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5Njg1OTg3fQ.QSw7618-_4ar4g-jyhs7ztO6ktyPGWppYOhjK5SAGAw
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /products/search:
+    get:
+      tags:
+        - Products
+      summary: "Products : Search"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+        - name: origin_id
+          in: query
+          schema:
+            type: integer
+          example: "5"
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          example: "7"
+        - name: date
+          in: query
+          schema:
+            type: string
+          example: "2022-12-26"
       responses:
         "200":
           description: Successful response
@@ -431,7 +476,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /products/2:
+  /products/6:
     get:
       tags:
         - Products
@@ -458,17 +503,15 @@ paths:
             schema:
               type: object
               example:
-                origin_id: 3
-                destination_id: 4
-                price: 600000
+                origin_id: 7
+                destination_id: 6
+                price: 620000
                 transit_total: 0
-                flight_date: "2022-12-26"
-                depature_hours: "15:20"
-                airplane_id: 2
+                flight_date: "2022-12-31"
+                depature_hours: "20:45"
+                airplane_id: 8
                 estimation: 2.5
-                gate: G1
-                terminal: "Y"
-                type: ECONOMY CLASS
+                type: ALL
       parameters:
         - name: Authorization
           in: header
@@ -502,32 +545,6 @@ paths:
           schema:
             type: string
           required: true
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json: {}
-  /products/search:
-    get:
-      tags:
-        - Products
-      summary: "Products : Search"
-      parameters:
-        - name: origin_id
-          in: query
-          schema:
-            type: integer
-          example: "3"
-        - name: destination_id
-          in: query
-          schema:
-            type: integer
-          example: "4"
-        - name: date
-          in: query
-          schema:
-            type: string
-          example: "2022-12-26"
       responses:
         "200":
           description: Successful response
@@ -579,6 +596,13 @@ paths:
               example:
                 product_id: 8
                 total_passenger: 2
+                passengers:
+                  - nik: "3651352"
+                    passenger_name: ipin
+                    passenger_phone: "084135"
+                  - nik: "3651352"
+                    passenger_name: upin
+                    passenger_phone: "084135"
       parameters:
         - name: Authorization
           in: header
@@ -606,7 +630,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /transactions/14:
+  /transactions/4:
     get:
       tags:
         - Transactions
@@ -616,8 +640,7 @@ paths:
           in: header
           schema:
             type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6IkFETUlOIiwiaWF0IjoxNjY5OTE2ODg5fQ._gkSrt7zhk0UXq5CZOOIuuJJ02w3qB0io2XEO6JWG6I
+          example: "{{token}}"
       responses:
         "200":
           description: Successful response
@@ -639,7 +662,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /transactions/3:
+  /transactions/13:
     put:
       tags:
         - Transactions
@@ -756,7 +779,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /payments/top-up/3:
+  /payments/top-up/4:
     put:
       tags:
         - Payment
@@ -779,7 +802,7 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /payments/2:
+  /payments/3:
     delete:
       tags:
         - Payment
@@ -874,7 +897,23 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /booking/14:
+  /user:
+    get:
+      tags:
+        - User / Profile
+      summary: "User : Get Profile"
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /booking/24:
     get:
       tags:
         - Booking Details
