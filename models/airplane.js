@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Airplane.belongsTo(models.Airline, {
         foreignKey: "airline_id",
-        as: "airline",
+        as: "airline",  
       });
 
       Airplane.hasMany(models.Product, {
