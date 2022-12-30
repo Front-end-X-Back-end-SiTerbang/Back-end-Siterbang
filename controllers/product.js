@@ -5,7 +5,22 @@ const { FLIGHT_CLASS } = require("../utils/enum");
 module.exports = {
   getAll: async (req, res, next) => {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll({
+        include: [
+          { model: Airline, as: "airline", attributes: ["name"] },
+          {
+            model: Airport,
+            as: "origin",
+            attributes: ["iata_code", "city", "name"],
+          },
+          {
+            model: Airport,
+            as: "destination",
+            attributes: ["iata_code", "city", "name"],
+          },
+          { model: Airplane , as: "airplane", attributes: ["name"] },
+        ],
+      });
 
       if (!products.length) {
         return res.status(200).json({
@@ -411,11 +426,10 @@ module.exports = {
         },
       };
 
-
       //SEARCH
       if (roundTrip) {
         if (!kelas) {
-          if(!returnDate){
+          if (!returnDate) {
             // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
             const totalRows = await Product.count(search_filter.RTACNR);
             const totalPage = Math.ceil(totalRows / limit);
@@ -426,33 +440,35 @@ module.exports = {
               limit: limit,
               totalRows: totalRows,
               totalPage: totalPage,
-          });
-          }else{
-            if(!returnDate){
-              // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
-            const totalRows = await Product.count(search_filter.RTACNR);
-            const totalPage = Math.ceil(totalRows / limit);
-            const result = await Product.findAll(search_filter.RTACNR);
-            res.json({
-              result: result,
-              page: page,
-              limit: limit,
-              totalRows: totalRows,
-              totalPage: totalPage,
             });
-            }else{
-          // ROUND-TRIP, ALL CLASSES
-            const totalRows = await Product.count(search_filter.RTAC);
-            const totalPage = Math.ceil(totalRows / limit);
-            const result = await Product.findAll(search_filter.RTAC);
-            res.json({
-              result: result,
-              page: page,
-              limit: limit,
-              totalRows: totalRows,
-              totalPage: totalPage,
-            });}
-        }} else {
+          } else {
+            if (!returnDate) {
+              // ROUND-TRIP, ALL CLASSES, NO RETURN DATE
+              const totalRows = await Product.count(search_filter.RTACNR);
+              const totalPage = Math.ceil(totalRows / limit);
+              const result = await Product.findAll(search_filter.RTACNR);
+              res.json({
+                result: result,
+                page: page,
+                limit: limit,
+                totalRows: totalRows,
+                totalPage: totalPage,
+              });
+            } else {
+              // ROUND-TRIP, ALL CLASSES
+              const totalRows = await Product.count(search_filter.RTAC);
+              const totalPage = Math.ceil(totalRows / limit);
+              const result = await Product.findAll(search_filter.RTAC);
+              res.json({
+                result: result,
+                page: page,
+                limit: limit,
+                totalRows: totalRows,
+                totalPage: totalPage,
+              });
+            }
+          }
+        } else {
           // ROUND-TRIP, SPECIFIC CLASS
           const totalRows = await Product.count(search_filter.RTSC);
           const totalPage = Math.ceil(totalRows / limit);
