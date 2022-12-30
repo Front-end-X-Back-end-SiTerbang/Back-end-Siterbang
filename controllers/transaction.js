@@ -326,7 +326,6 @@ module.exports = {
         where: { is_paid: false },
       });
       const countPaid = await Transaction.count({ where: { is_paid: true } });
-      b;
       return res.status(200).json({
         status: true,
         message: "success count transaction data",
