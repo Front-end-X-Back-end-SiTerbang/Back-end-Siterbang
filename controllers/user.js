@@ -151,10 +151,8 @@ module.exports = {
         where: { id },
       });
 
-      if(!userExist) {
-        return res.status(404).json({
-          
-        })
+      if (!userExist) {
+        return res.status(404).json({});
       }
 
       const deleted = await User.destroy({ where: { id } });

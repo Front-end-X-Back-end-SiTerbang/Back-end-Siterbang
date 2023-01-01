@@ -428,6 +428,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
         - name: Search
           in: query
           schema:
@@ -497,8 +502,12 @@ paths:
       description: Create An Airline
       tags:
         - Airlines
-      security:
-        bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "{{token}}"
       requestBody:
         content:
           application/json:
@@ -573,8 +582,12 @@ paths:
       description: Get All Airlines
       tags:
         - Airlines
-      security:
-        - bearerAuth: []
+      # parameters:
+      #   - name: Authorization
+      #     in: header
+      #     schema:
+      #       type: string
+      #     example: "{{token}}"
       responses:
         '200':
           description: OK
@@ -594,9 +607,227 @@ paths:
                         type: string
                       phone:
                         type: string
+      '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+      '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+      '500':
+          description: Internal Server Error
+  /airlines/{id}:
+    get:
+      summary: Get Airlines By Id
+      description: Get An Airlines By Id
+      tags:
+        - Airlines
+      parameters:
+        # - name: Authorization
+        #   in: header
+        #   schema:
+        #     type: string
+        #   example: "{{token}}"
+        - name: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "sucess"
+                    data:
+                      name: "Citilink"
+                      phone: "0816257218"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    put:
+      summary: Update Airline By Id
+      description: Update An Airline By Id
+      tags:
+        - Airlines
+      parameters:
+        # - name: Authorization
+        #   in: header
+        #   schema:
+        #     type: string
+        #   example: "{{token}}"
+        - name: id
+          in: path
+          schema:
+            type: integer
+          example: 1
+          required: true 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  name: "Garuda Indonesia"
+                  phone: "8092714343"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      phone: "930274375323"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete Airlines By Id
+      description: Delete An Airlines By Id
+      tags:
+        - Airlines
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          examples: 1
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message: string
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      phone: "90742394678"
 
   
-          
 
   
     

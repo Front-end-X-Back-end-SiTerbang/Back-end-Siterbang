@@ -7,6 +7,7 @@ module.exports = {
   mustLogin: (req, res, next) => {
     try {
       const token = req.headers["authorization"];
+      // const token = bearerToken.split(" ")[1];
       if (!token) {
         return res.status(401).json({
           status: false,
@@ -35,6 +36,7 @@ module.exports = {
   mustAdmin: (req, res, next) => {
     try {
       const token = req.headers["authorization"];
+      // const token = bearerToken.split(" ")[1];
       if (!token) {
         return res.status(401).json({
           status: false,
