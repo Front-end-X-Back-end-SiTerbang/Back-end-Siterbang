@@ -12,7 +12,7 @@ router.get(
   c.transaction.getProductTransaction
 );
 router.put("/:id", mid.restrict.mustLogin, c.transaction.payment);
-router.delete(
+router.get(
   "/cancel/:id",
   mid.restrict.mustLogin,
   c.transaction.cancelTransaction
@@ -22,5 +22,6 @@ router.put(
   mid.restrict.mustLogin,
   c.transaction.updateTransactionRead
 );
+router.delete("/:id", mid.restrict.mustAdmin, c.transaction.deleteTransaction);
 
 module.exports = router;

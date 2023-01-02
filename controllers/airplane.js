@@ -38,7 +38,7 @@ module.exports = {
 
       const airlineExist = await Airline.findOne({ where: { id: airline_id } });
       if (!airlineExist) {
-        return res.status(400).json({
+        return res.status(404).json({
           status: false,
           message: "airline not found",
           data: airlineExist,

@@ -319,6 +319,27 @@ module.exports = {
       data: updated,
     });
   },
+  deleteTransaction: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const transactionExist = await Transaction.findOne({ where: { id } });
+
+      if (!transactionExist) {
+        res.status(404).json({
+          status: false,
+          message: "Data Transaction Not Found",
+          data: null,
+        });
+      }
+
+      const deleted = await Transaction.destroy({
+        where: { id },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   countAll: async (req, res, next) => {
     try {
       const countAll = await Transaction.count();

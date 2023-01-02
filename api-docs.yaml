@@ -12,9 +12,10 @@ servers:
 
 tags:
   - Auth
-  - Airplane
+  - Airplanes
   - Airlines
   - Product
+  - User
 
 paths:
   /auth/register:
@@ -419,6 +420,339 @@ paths:
                     message: invalid token
         '500':
           description: Internal Service Error
+  /user:
+    get:
+      summary: Get User Info Profile
+      description: Get An User Info Profile
+      tags:
+        - User
+      # parameters:
+      #   - name: authorization
+      #     in: header
+      #     schema:
+      #       type: string
+      #     required: true 
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      gender:
+                        type: string
+                      postal_code:
+                        type: integer
+                      address:
+                        type: string
+                      photo:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    name: "John Doe"
+                    email: "johdoe@mail.com"
+                    phone: "36728944839279"
+                    gender: "male"
+                    postal_code: 153671
+                    address: "Jakarta"
+                    photo: "https://imagekit.io/asgdjawgy"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /user/profile:
+    put:
+      summary: Update An User Profile
+      description: Update An User Profile
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                gender:
+                  type: string
+                postal_code:
+                  type: integer
+                address:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  name: "John Doe"
+                  email: "johdoe@mail.com"
+                  phone: "36728944839279"
+                  gender: "male"
+                  postal_code: 153671
+                  address: "Jakarta"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      gender:
+                        type: string
+                      postal_code:
+                        type: integer
+                      address:
+                        type: string
+                      photo:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "John Doe"
+                      email: "johdoe@mail.com"
+                      phone: "36728944839279"
+                      gender: "male"
+                      postal_code: 153671
+                      address: "Bandung"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /user/profile/photo:
+    put:
+      summary: Update An Photo User Profile
+      description: Update An Photo For User
+      tags:
+        - User
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+          description: "Only png, jpg, and jpeg allowed to upload"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      photo:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    photo: "https://imagekit.io/asgdjawgy"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /user/profile/change-password:
+    put:
+      summary: Update Password User
+      description: Update An Password User Profile
+      tags:
+        - User
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                new_password:
+                  type: string
+                confirm_new_password:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  old_password: "admin123"
+                  new_password: "123admin"
+                  confirm_new_password: "123admin"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-badrequest:
+                  value:
+                    status: false
+                    message: "Minimum Password is 8 character"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false
+                    message: "You're not authorized || Wrong Password || Password doesn't match"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error  
   /airlines:
     get:
       summary: Get All Airlines By Search
@@ -428,11 +762,11 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: Authorization
-          in: header
-          schema:
-            type: string
-          example: "{{token}}"
+        # - name: Authorization
+        #   in: header
+        #   schema:
+        #     type: string
+        #   example: "{{token}}"
         - name: Search
           in: query
           schema:
@@ -471,7 +805,7 @@ paths:
                     data:
                       name: "Garuda Indonesia"
                       phone: "086736247823"
-        "401":
+        '401':
           description: Unauthorized
           content:
             application/json:
@@ -483,7 +817,7 @@ paths:
                   message:
                     type: string
                   data: null
-        "404":
+        '404':
           description: Not Found
           content:
             application/json:
@@ -502,12 +836,14 @@ paths:
       description: Create An Airline
       tags:
         - Airlines
-      parameters:
-        - name: Authorization
-          in: header
-          schema:
-            type: string
-          example: "{{token}}"
+      security:
+        bearerAuth: []
+      # parameters:
+      #   - name: Authorization
+      #     in: header
+      #     schema:
+      #       type: string
+      #     example: "{{token}}"
       requestBody:
         content:
           application/json:
@@ -792,12 +1128,14 @@ paths:
       description: Delete An Airlines By Id
       tags:
         - Airlines
+      security:
+        bearerAuth: []
       parameters:
         - name: id
           in: path
           schema:
             type: integer
-          examples: 1
+          example: 1
           required: true
       responses:
         '200':
@@ -826,6 +1164,547 @@ paths:
                     data:
                       name: "Garuda Indonesia"
                       phone: "90742394678"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /airplanes:
+    get:
+      summary: Get All Airplanes
+      description: Get All Airplanes
+      tags:
+        - Airplanes
+      security:
+        bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          required: true 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true 
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    post:
+      summary: Create An Airplane
+      description: Create An Airplane
+      tags:
+        - Airplanes
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                airline_id:
+                  type: integer
+                tipe:
+                  type: string
+                capacity:
+                  type: integer
+            examples:
+              example-body:
+                value:
+                  name: "Garuda Indonesia"
+                  airline_id: 1
+                  type: "BOEING 7777"
+                  capacity: 200
+      responses:
+        '200':
+          description: OK
+          content:
+            applicatioon/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-conflict:
+                  value:
+                    status: false 
+                    message: "Airplane already exist"
+                    data: null 
+        '500':
+          description: Internal Server Error
+  /airplanes/{id}:
+    get:
+      summary: Get An Airplane By Id
+      description: Get An Airplane By Id
+      tags:
+        - Airplanes
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true 
+          examples: 1
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    put:
+      summary: Update An Airplane By Id
+      description: Update An Airplane By Id
+      tags:
+        - Airplanes
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true 
+          examples: 1
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                airline_id:
+                  type: integer
+                tipe:
+                  type: string
+                capacity:
+                  type: integer
+            examples:
+              example-body:
+                value:
+                  name: "Garuda Indonesia"
+                  airline_id: 1
+                  type: "BOEING 7777"
+                  capacity: 200
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete An Airplane By Id
+      description: Delete An Airplane By Id
+      tags:
+        - Airplanes
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true 
+          examples: 1
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /airplanes/all:
+    get:
+      summary: Get All Airplanes
+      description: Get All Airplanes
+      tags:
+        - Airplanes
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      airline_id:
+                        type: integer
+                      tipe:
+                        type: string
+                      capacity:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      name: "Garuda Indonesia"
+                      airline_id: 1
+                      type: "BOEING 7777"
+                      capacity: 200
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  
+
+                  
+
+
 
   
 
