@@ -336,6 +336,11 @@ module.exports = {
       const deleted = await Transaction.destroy({
         where: { id },
       });
+      return res.status(200).json({
+        status: true,
+        message: "Transaction deleted successfully",
+        data: deleted,
+      });
     } catch (err) {
       next(err);
     }
