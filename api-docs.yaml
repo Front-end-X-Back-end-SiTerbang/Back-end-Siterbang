@@ -1700,7 +1700,231 @@ paths:
                   data: null
         '500':
           description: Internal Server Error
-  
+  /airports:
+    get:
+      summary: Get An Airport By Search
+      description: Get An Airport By Search
+      tags:
+        - Airports
+      parameters:
+        - name: Search
+          in: query
+          schema:
+            type: string
+          required: true
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          decsription: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              example:
+                status-ok:
+                  value:
+                    status:
+                      type: string
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        iata_code:
+                          type: string
+                        name:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+    post:
+      summary: Create An Airports
+      description: Create An Airports
+      tags:
+        - Airports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                iata_code:
+                  type: string
+                name:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  iata_code: "CGK"
+                  name: "Soekarno-Hatta"
+                  city: "Jakarta"
+                  country: "Indonesia"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              examples:
+                example-body:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      iata_code: "CGK"
+                      name: "Soekarno-Hatta"
+                      city: "Jakarta"
+                      country: "Indonesia"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+        '500':
+          description: Internal Server Error
+  /airports/all:
+    get:
+      summary: Get All Airports
+      description: Get All Airports
+      tags:
+        - Airports
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                    data:
+                      type: object
+                      properties:
+                        
+                        
+      
+    
+                        
+
 
                   
 

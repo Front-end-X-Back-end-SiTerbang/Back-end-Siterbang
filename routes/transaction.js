@@ -22,6 +22,6 @@ router.put(
   mid.restrict.mustLogin,
   c.transaction.updateTransactionRead
 );
-router.delete("/:id", mid.restrict.mustAdmin, c.transaction.deleteTransaction);
+router.delete("/:id", mid.restrict.mustLogin, c.transaction.deleteTransaction);
 
 module.exports = router;
