@@ -160,7 +160,7 @@ module.exports = {
       return res.status(200).json({
         status: true,
         message: "delete data successful!",
-        dat: deleted,
+        data: deleted,
       });
     } catch (err) {
       next(err);

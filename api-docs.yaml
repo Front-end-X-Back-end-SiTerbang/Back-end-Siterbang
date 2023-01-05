@@ -976,15 +976,12 @@ paths:
       tags:
         - Airlines
       parameters:
-        # - name: Authorization
-        #   in: header
-        #   schema:
-        #     type: string
-        #   example: "{{token}}"
         - name: id
           in: path
           schema:
             type: integer
+          example: 1
+          required: true
       responses:
         '200':
           description: OK
@@ -1044,17 +1041,12 @@ paths:
       tags:
         - Airlines
       parameters:
-        # - name: Authorization
-        #   in: header
-        #   schema:
-        #     type: string
-        #   example: "{{token}}"
         - name: id
           in: path
           schema:
             type: integer
           example: 1
-          required: true 
+          required: true
       requestBody:
         content:
           application/json:
@@ -1192,8 +1184,8 @@ paths:
           description: Internal Server Error
   /airplanes:
     get:
-      summary: Get All Airplanes
-      description: Get All Airplanes
+      summary: Get All Airplanes By Search
+      description: Get All Airplanes By Search
       tags:
         - Airplanes
       security:
@@ -1737,7 +1729,7 @@ paths:
                         type: string
                       country:
                         type: string
-              example:
+              examples:
                 status-ok:
                   value:
                     status:
@@ -1876,6 +1868,12 @@ paths:
                   message:
                     type: string
                   data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
         '500':
           description: Internal Server Error
   /airports/all:
@@ -1912,22 +1910,2514 @@ paths:
               examples:
                 status-ok:
                   value:
-                    status:
-                      type: boolean
-                    message:
-                      type: string
+                    status: true
+                    message: "Success"
                     data:
-                      type: object
-                      properties:
-                        
-                        
-      
-    
-                        
-
-
-                  
-
+                      iata_code: "CGK"
+                      name: "Soekarno-Hatta"
+                      city: "Jakarta"
+                      country: "Indonesia"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /airports/{iata_code}:
+    get:
+      summary: Get An Airports By Iata Code
+      description: Get An Airports By Iata Code
+      tags:
+        - Airports
+      parameters:
+        - name: iata_code
+          in: path
+          schema:
+            type: string
+          example: "CGK"
+          required: true
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      iata_code: "CGK"
+                      name: "Soekarno-Hatta"
+                      city: "Jakarta"
+                      country: "Indonesia"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    put:
+      summary: Update An Airports By Iata Code
+      description: Update An Airports By Iata Code
+      tags:
+        - Airports
+      parameters:
+        - name: iata_code
+          in: path
+          schema:
+            type: string
+          example: "CGK"
+          required: true
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                iata_code:
+                  type: string
+                name:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+            examples:
+              example-body:
+                iata_code: "CGK"
+                name: "Jakarta Airports"
+                city: "Jakarta"
+                country: "Indonesia"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      iata_code: "CGK"
+                      name: "Soekarno-Hatta"
+                      city: "Jakarta"
+                      country: "Indonesia"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete An Airports By Iata Code
+      description: Delete An Airports By Iata Code
+      tags:
+        - Airports
+      parameters:
+        - name: iata_code
+          in: path
+          schema:
+            type: string
+          example: "CGK"
+          required: true
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      iata_code:
+                        type: string
+                      name:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      iata_code: "CGK"
+                      name: "Soekarno-Hatta"
+                      city: "Jakarta"
+                      country: "Indonesia"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /products:
+    get:
+      summary: Get All Product By Search
+      description: Get ALl Product By Search
+      tags:
+        - Products
+      parameters:
+        - name: origin_id
+          in: query
+          schema:
+            type: integer
+          required: true
+          example: 1
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          required: true 
+          example: 5
+        - name: date
+          in: query
+          schema:
+            type: string
+          required: true
+          example: "2022-12-26"
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      stock:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airline_id:
+                        type: integer
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      code:
+                        type: string
+                      gate:
+                        type: string
+                      terminal:
+                        type: string
+                      tipe:
+                        type: string
+                      airline:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                      origin:
+                        type: object
+                        properties:
+                          iata_code:
+                            type: string
+                          city:
+                            type: string
+                          name:
+                            type: string
+                      destination:
+                        iata_code:
+                          type: string
+                        city:
+                          type: string
+                        name:
+                          type: string
+              examples:
+                status-ok:
+                  value:
+                    origin_id: 8
+                    destination_id: 115
+                    price: 89076567
+                    stock: 144
+                    transit_total: 0
+                    flight_date: "2023-01-05"
+                    depature_hours: "11:30"
+                    airline_id: 306
+                    airplane_id: 57
+                    estimation: 2
+                    code: "T6RGM"
+                    gate: "B3"
+                    terminal: "International B2"
+                    type: "First Class"
+                    airline:
+                      name: "CATHAY PACIFIC"
+                    origin:
+                      iata_code: "YUL"
+                      city: "Montreal"
+                      name: "Montreal / Pierre Elliot Truedeau International Airport"
+                    destination:
+                      iata_code: "CVG"
+                      city: "Cincinnati / Covington"
+                      name: "Cincinnati Northern Kentucky International Airport"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    post:
+      summary: Create An Product
+      description: Create An Product
+      tags:
+        - Products
+      scurity:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin_id:
+                  type: integer
+                destination_id:
+                  type: integer
+                price:
+                  type: integer
+                transit_total:
+                  type: integer
+                flight_date:
+                  type: string
+                depature_hours:
+                  type: string
+                ariplane_id:
+                  type: integer
+                estimation:
+                  type: integer
+                tipe:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  origin_id: 7
+                  destination_id: 6
+                  price: 200000
+                  transit_total: 0
+                  flight_date: "2022-12-13"
+                  depature_hours: "20.45"
+                  airplane_id: 8
+                  estimation: 2.5
+                  type: "ALL"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      origin_id: 7
+                      destination_id: 6
+                      price: 200000
+                      transit_total: 0
+                      flight_date: "2022-12-13"
+                      depature_hours: "20.45"
+                      airplane_id: 8
+                      estimation: 2.5
+                      type: "ALL"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Already Exist"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /products/all:
+    get:
+      summary: Get All Product
+      description: Get All Product
+      tags:
+        - Products
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      origin_id: 7
+                      destination_id: 6
+                      price: 200000
+                      transit_total: 0
+                      flight_date: "2022-12-13"
+                      depature_hours: "20.45"
+                      airplane_id: 8
+                      estimation: 2.5
+                      type: "ALL"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /products/{id}:
+    get:
+      summary: Get An Product By Id
+      description: Get An Product By Id
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      origin_id: 7
+                      destination_id: 6
+                      price: 200000
+                      transit_total: 0
+                      flight_date: "2022-12-13"
+                      depature_hours: "20.45"
+                      airplane_id: 8
+                      estimation: 2.5
+                      type: "ALL"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    put:
+      summary: Update An Product By Id
+      description: Update An Product By Id
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin_id:
+                  type: integer
+                destination_id:
+                  type: integer
+                price:
+                  type: integer
+                transit_total:
+                  type: integer
+                flight_date:
+                  type: string
+                depature_hours:
+                  type: string
+                airplane_id:
+                  type: integer
+                estimation:
+                  type: integer
+                tipe:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  origin_id: 7
+                  destination_id: 6
+                  price: 200000
+                  transit_total: 0
+                  flight_date: "2022-12-13"
+                  depature_hours: "20.45"
+                  airplane_id: 8
+                  estimation: 2.5
+                  type: "ALL"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      origin_id: 7
+                      destination_id: 6
+                      price: 200000
+                      transit_total: 0
+                      flight_date: "2022-12-13"
+                      depature_hours: "20.45"
+                      airplane_id: 8
+                      estimation: 2.5
+                      type: "ALL"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete An Product By Id
+      description: Delete An Product By Id
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      origin_id:
+                        type: integer
+                      destination_id:
+                        type: integer
+                      price:
+                        type: integer
+                      transit_total:
+                        type: integer
+                      flight_date:
+                        type: string
+                      depature_hours:
+                        type: string
+                      airplane_id:
+                        type: integer
+                      estimation:
+                        type: integer
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      origin_id: 7
+                      destination_id: 6
+                      price: 200000
+                      transit_total: 0
+                      flight_date: "2022-12-13"
+                      depature_hours: "20.45"
+                      airplane_id: 8
+                      estimation: 2.5
+                      type: "ALL"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /transactions:
+    post:
+      summary: Create An Transaction
+      description: Create An Transaction
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                total_passenger:
+                  type: integer
+                passenger:
+                  type: object
+                  properties:
+                    nik:
+                      type: string
+                    passenger_name:
+                      type: string
+                    passenger_phone:
+                      type: string
+            examples:
+              example-body:
+                value:
+                  product_id: 1
+                  total_passenger: 1
+                  passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Already Exist"
+                    data: null
+        '500':
+          description: Internal Server Error   
+  /transactions/all:
+    get:
+      summary: Get All Transactions
+      description: Get All Transactions
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error 
+  /transactions/{id}:
+    get:
+      summary: Get An Transactions By Id
+      description: Get An Transactions By Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error 
+    put:
+      summary: Update An Transactions By Id
+      description: Update An Transactions By Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete An Transactions By Id
+      description: Delete An Transactions By Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error 
+  /transactions/products/{id}:
+    get:
+      summary: Get An Transactions By Product Id
+      description: Get An Transactions By Product Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /transactions/cancel/{id}:
+    get:
+      summary: Cancel An Transactions By Id
+      description: Cancel An Transactions By Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error 
+  /transactions/notif/{id}:
+    put:
+      summary: Update An Notif Transactions By Id
+      description: Update An Notif Transactions By Id
+      tags:
+        - Transactions
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                      total_passenger:
+                        type: integer
+                      passenger:
+                        type: object
+                        properties:
+                          nik:
+                            type: string
+                          passenger_name:
+                            type: string
+                          passenger_phone:
+                            type: string
+              examples:
+                status-ok:
+                  value:
+                    product_id: 1
+                    total_passenger: 1
+                    passenger:
+                    nik: "6287432"
+                    passenger_name: "John Doe"
+                    passenger_phone: "2347832"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /payments:
+    post:
+      summary: Create An Payment
+      description: Create An Payment
+      tags:
+        - Payments
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: integer
+                name:
+                  type: string
+                tipe:
+                  type: string
+            examples:
+              examples-body:
+                value:
+                  number: 98264873
+                  name: "John Doe"
+                  type: "Credit Card"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Already Exist"
+                    data: null
+        '500':
+          description: Internal Server Error  
+  /payments/{id}:
+    get:
+      summary: Get An Payment By Id
+      description: Get An Payment By Id
+      tags:
+        - Payments
+      security:
+        bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error 
+    put:
+      summary: Update An Payment By Id
+      description: Update An Payment By Id
+      tags:
+        - Payments
+      security:
+        bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: integer
+                name:
+                  type: string
+                tipe:
+                  type: string
+            examples:
+              examples-body:
+                value:
+                  number: 98264873
+                  name: "John Doe"
+                  type: "Credit Card"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    delete:
+      summary: Delete An Payment By Id
+      description: Delete An Payment By Id
+      tags:
+        - Payments
+      security:
+        bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /payments/all:
+    get:
+      summary: Get All Payment
+      description: Get All Payment
+      tags:
+        - Payments
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /payments/top-up/{id}:
+    put:
+      summary: Get All Payment
+      description: Get All Payment
+      tags:
+        - Payments
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                balance:
+                  type: integer
+            examples:
+              example-body:
+                value:
+                  balance: 999999999
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      name:
+                        type: string
+                      tipe:
+                        type: string
+                      balance:
+                        type: integer
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      number: 38267732842
+                      name: "John Doe"
+                      type: "Credit Card"
+                      balance: 99999999
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+  /booking/{transactions_id}:
+    get:
+      summary: Get Booking By Transactions_id
+      description: Get Booking By Transactions_id
+      tags:
+        - Bookings
+      parameters:
+        - name: transactions_id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 1
+      security:
+        bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      nik:
+                        type: string
+                      passenger_name:
+                        type: string
+                      passenger_phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      nik: "62398642968832648"
+                      passenger_name: "John Doe"
+                      passenger_phone: "80972186783253"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '500':
+          description: Internal Server Error
+    post:
+      summary: Create An Booking Details
+      description: Create An Booking Details
+      tags:
+        - Bookings
+      security:
+        bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nik:
+                  type: string
+                passenger_name:
+                  type: string
+                passenger_type:
+                  type: string
+            examples:
+              example-body:
+                value:
+                  nik: "09274986326563275"
+                  passenger_name: "John Doe"
+                  passenger_phone: "098765436721"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      nik:
+                        type: string
+                      passenger_name:
+                        type: string
+                      passenger_phone:
+                        type: string
+              examples:
+                status-ok:
+                  value:
+                    status: true
+                    message: "Success"
+                    data:
+                      nik: "62398642968832648"
+                      passenger_name: "John Doe"
+                      passenger_phone: "80972186783253"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-unauthorized:
+                  value:
+                    status: false 
+                    message: "You're not authorized"
+                    data: null 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Not Found"
+                    data: null
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: null
+              examples:
+                status-notfound:
+                  value:
+                    status: false
+                    message: "Already Exist"
+                    data: null
+        '500':
+          description: Internal Server Error
 
 
   
